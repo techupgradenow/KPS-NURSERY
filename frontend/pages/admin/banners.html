@@ -1,0 +1,1032 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <!-- SEO Meta Tags - Admin Panel (noindex) -->
+    <title>Banners Management - SK Bakers Admin Panel</title>
+    <meta name="description" content="SK Bakers Admin - Manage website banners and promotions.">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="googlebot" content="noindex, nofollow">
+    <meta name="author" content="SK Bakers Kovilpatti">
+
+    <!-- Favicon & App Icons -->
+    <link rel="icon" type="image/webp" href="../../logo.webp">
+    <link rel="icon" type="image/png" href="../../assets/logo.png">
+    <link rel="shortcut icon" type="image/png" href="../../assets/logo.png">
+    <link rel="apple-touch-icon" href="../../assets/logo.png">
+
+    <!-- Theme Color -->
+    <meta name="theme-color" content="#B03359">
+    <meta name="msapplication-TileColor" content="#B03359">
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/admin.css?v=5.0">
+    <style>
+        /* Banner Management Styles */
+        .banner-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 24px;
+        }
+
+        .banner-card {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: grab;
+            position: relative;
+        }
+
+        .banner-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .banner-card.dragging {
+            opacity: 0.5;
+            cursor: grabbing;
+            transform: scale(1.02);
+        }
+
+        .banner-card.drag-over {
+            border: 2px dashed var(--primary);
+        }
+
+        .banner-images {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2px;
+            background: var(--gray-lighter);
+        }
+
+        .banner-image-container {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .banner-image-container img {
+            width: 100%;
+            height: 140px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .banner-image-label {
+            position: absolute;
+            bottom: 8px;
+            left: 8px;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            backdrop-filter: blur(4px);
+        }
+
+        .banner-card-body {
+            padding: 20px;
+        }
+
+        .banner-card-title {
+            font-weight: 700;
+            font-size: 16px;
+            color: var(--dark);
+            margin-bottom: 6px;
+        }
+
+        .banner-card-desc {
+            font-size: 13px;
+            color: var(--gray);
+            margin-bottom: 12px;
+            line-height: 1.5;
+        }
+
+        .banner-card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 16px;
+            border-top: 1px solid var(--gray-lighter);
+        }
+
+        .drag-handle {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--gray);
+            font-size: 13px;
+            font-weight: 500;
+            padding: 6px 12px;
+            background: var(--gray-lighter);
+            border-radius: 8px;
+            cursor: grab;
+        }
+
+        .drag-handle:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .drag-handle i {
+            font-size: 14px;
+        }
+
+        /* Image Upload Styles */
+        .image-upload-section {
+            margin-bottom: 24px;
+        }
+
+        .image-upload-section h4 {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .image-upload-section h4 i {
+            color: var(--primary);
+        }
+
+        .image-specs {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+        }
+
+        .spec-badge {
+            background: var(--gray-lighter);
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            color: var(--gray);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .spec-badge i {
+            color: var(--primary);
+        }
+
+        .upload-zone {
+            border: 2px dashed var(--gray-light);
+            border-radius: 12px;
+            padding: 24px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            background: var(--gray-lighter);
+        }
+
+        .upload-zone:hover, .upload-zone.dragover {
+            border-color: var(--primary);
+            background: rgba(16, 185, 129, 0.05);
+        }
+
+        .upload-zone.has-image {
+            border-style: solid;
+            border-color: var(--primary);
+            padding: 0;
+            overflow: hidden;
+        }
+
+        .upload-zone img {
+            width: 100%;
+            height: 200px;
+            object-fit: contain;
+            display: none;
+            background: #f8f8f8;
+        }
+
+        .upload-zone.has-image img {
+            display: block;
+        }
+
+        .upload-zone.has-image .upload-placeholder {
+            display: none;
+        }
+
+        .upload-placeholder {
+            padding: 20px;
+        }
+
+        .upload-placeholder i {
+            font-size: 48px;
+            color: var(--gray-light);
+            margin-bottom: 12px;
+        }
+
+        .upload-placeholder p {
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 4px;
+        }
+
+        .upload-placeholder span {
+            font-size: 12px;
+            color: var(--gray);
+        }
+
+        .upload-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 12px;
+        }
+
+        .upload-error {
+            color: var(--danger);
+            font-size: 12px;
+            margin-top: 8px;
+            display: none;
+        }
+
+        .upload-error.show {
+            display: block;
+        }
+
+        /* Modal Enhancements */
+        .modal-banner {
+            max-width: 800px;
+        }
+
+        .image-upload-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        @media (max-width: 768px) {
+            .image-upload-grid {
+                grid-template-columns: 1fr;
+            }
+            .banner-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Progress indicator */
+        .upload-progress {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--gray-lighter);
+            display: none;
+        }
+
+        .upload-progress.show {
+            display: block;
+        }
+
+        .upload-progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        /* Status indicator on card */
+        .banner-status-indicator {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            z-index: 10;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-layout">
+        <!-- Mobile Sidebar Overlay -->
+        <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <img src="../../logo.webp" alt="SK Bakers" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 40 40%22><rect fill=%22%23B03359%22 width=%2240%22 height=%2240%22 rx=%228%22/><text x=%2250%%22 y=%2255%%22 fill=%22white%22 font-size=%2214%22 font-weight=%22bold%22 text-anchor=%22middle%22>SK</text></svg>'">
+                <h2>SK Bakers</h2>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="index.html" class="nav-item">
+                    <i class="fas fa-th-large"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="orders.html" class="nav-item">
+                    <i class="fas fa-shopping-bag"></i>
+                    <span>Orders</span>
+                </a>
+                <a href="products.html" class="nav-item">
+                    <i class="fas fa-box"></i>
+                    <span>Products</span>
+                </a>
+                <a href="menu.html" class="nav-item">
+                    <i class="fas fa-utensils"></i>
+                    <span>Menu Card</span>
+                </a>
+                <a href="categories.html" class="nav-item">
+                    <i class="fas fa-folder"></i>
+                    <span>Categories</span>
+                </a>
+                <a href="customers.html" class="nav-item">
+                    <i class="fas fa-users"></i>
+                    <span>Customers</span>
+                </a>
+                <div class="nav-divider"></div>
+                <a href="banners.html" class="nav-item active">
+                    <i class="fas fa-images"></i>
+                    <span>Banners</span>
+                </a>
+                <a href="popups.html" class="nav-item">
+                    <i class="fas fa-bullhorn"></i>
+                    <span>Offer Popups</span>
+                </a>
+                <div class="nav-divider"></div>
+                <a href="#" class="nav-item" onclick="AdminAPI.logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="admin-header">
+                <div class="header-left">
+                    <button class="toggle-sidebar">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <h1 class="page-title">Banners</h1>
+                </div>
+                <div class="header-right">
+                    <div class="admin-profile">
+                        <div class="admin-avatar">A</div>
+                        <div class="admin-info">
+                            <div class="admin-name">Admin</div>
+                            <div class="admin-role">Administrator</div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <div class="content-area">
+                <div class="card">
+                    <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <h3 class="card-title"><i class="fas fa-images"></i> Home Page Banners</h3>
+                        </div>
+                        <button class="btn btn-primary" onclick="openAddModal()">
+                            <i class="fas fa-plus"></i> Add Banner
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <div style="background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); padding: 16px; border-radius: 12px; margin-bottom: 24px; display: flex; align-items: center; gap: 12px;">
+                            <i class="fas fa-info-circle" style="color: #2563eb; font-size: 20px;"></i>
+                            <div>
+                                <strong style="color: #1d4ed8;">Drag & Drop Reordering</strong>
+                                <p style="color: #3b82f6; font-size: 13px; margin: 0;">Drag banners to reorder them. Changes are saved automatically.</p>
+                            </div>
+                        </div>
+                        <div class="banner-grid" id="bannersGrid">
+                            <div class="loading">
+                                <div class="loading-spinner"></div>
+                                Loading banners...
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Add/Edit Banner Modal -->
+    <div class="modal-overlay" id="bannerModal">
+        <div class="modal modal-banner">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modalTitle"><i class="fas fa-image"></i> Add Banner</h3>
+                <button class="modal-close" onclick="AdminAPI.closeModal('bannerModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="bannerForm">
+                    <input type="hidden" id="bannerId">
+
+                    <!-- Image Upload Section -->
+                    <div class="image-upload-grid">
+                        <!-- Desktop Image -->
+                        <div class="image-upload-section">
+                            <h4><i class="fas fa-desktop"></i> Desktop Banner *</h4>
+                            <div class="image-specs">
+                                <span class="spec-badge"><i class="fas fa-ruler-combined"></i> 1920 × 600 px</span>
+                                <span class="spec-badge"><i class="fas fa-expand-alt"></i> 16:5</span>
+                                <span class="spec-badge"><i class="fas fa-file-image"></i> Max 2MB</span>
+                            </div>
+                            <div class="upload-zone" id="desktopUploadZone" onclick="document.getElementById('desktopFileInput').click()">
+                                <img id="desktopPreview" alt="Desktop Preview">
+                                <div class="upload-placeholder">
+                                    <i class="fas fa-cloud-upload-alt"></i>
+                                    <p>Click or drag to upload</p>
+                                    <span>JPG, PNG, WEBP</span>
+                                </div>
+                                <div class="upload-progress" id="desktopProgress">
+                                    <div class="upload-progress-bar" id="desktopProgressBar"></div>
+                                </div>
+                            </div>
+                            <input type="file" id="desktopFileInput" accept="image/jpeg,image/png,image/webp" style="display: none;">
+                            <input type="hidden" id="desktopImageUrl">
+                            <div class="upload-actions">
+                                <button type="button" class="btn btn-outline btn-sm" onclick="event.stopPropagation(); document.getElementById('desktopFileInput').click()">
+                                    <i class="fas fa-upload"></i> Choose File
+                                </button>
+                                <button type="button" class="btn btn-outline btn-sm" id="desktopClearBtn" style="display: none;" onclick="event.stopPropagation(); clearImage('desktop')">
+                                    <i class="fas fa-times"></i> Remove
+                                </button>
+                            </div>
+                            <div class="upload-error" id="desktopError"></div>
+                        </div>
+
+                        <!-- Mobile Image -->
+                        <div class="image-upload-section">
+                            <h4><i class="fas fa-mobile-alt"></i> Mobile Banner *</h4>
+                            <div class="image-specs">
+                                <span class="spec-badge"><i class="fas fa-ruler-combined"></i> 1080 × 1350 px</span>
+                                <span class="spec-badge"><i class="fas fa-expand-alt"></i> 4:5</span>
+                                <span class="spec-badge"><i class="fas fa-file-image"></i> Max 2MB</span>
+                            </div>
+                            <div class="upload-zone" id="mobileUploadZone" onclick="document.getElementById('mobileFileInput').click()">
+                                <img id="mobilePreview" alt="Mobile Preview">
+                                <div class="upload-placeholder">
+                                    <i class="fas fa-cloud-upload-alt"></i>
+                                    <p>Click or drag to upload</p>
+                                    <span>JPG, PNG, WEBP</span>
+                                </div>
+                                <div class="upload-progress" id="mobileProgress">
+                                    <div class="upload-progress-bar" id="mobileProgressBar"></div>
+                                </div>
+                            </div>
+                            <input type="file" id="mobileFileInput" accept="image/jpeg,image/png,image/webp" style="display: none;">
+                            <input type="hidden" id="mobileImageUrl">
+                            <div class="upload-actions">
+                                <button type="button" class="btn btn-outline btn-sm" onclick="event.stopPropagation(); document.getElementById('mobileFileInput').click()">
+                                    <i class="fas fa-upload"></i> Choose File
+                                </button>
+                                <button type="button" class="btn btn-outline btn-sm" id="mobileClearBtn" style="display: none;" onclick="event.stopPropagation(); clearImage('mobile')">
+                                    <i class="fas fa-times"></i> Remove
+                                </button>
+                            </div>
+                            <div class="upload-error" id="mobileError"></div>
+                        </div>
+                    </div>
+
+                    <!-- Banner Details -->
+                    <div class="form-group">
+                        <label for="bannerTitle">Banner Title</label>
+                        <input type="text" id="bannerTitle" class="form-control" placeholder="e.g., Summer Sale 50% Off">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="bannerDescription">Description (Optional)</label>
+                        <textarea id="bannerDescription" class="form-control" rows="2" placeholder="Brief description for internal reference"></textarea>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="redirectType">Click Action</label>
+                            <select id="redirectType" class="form-control" onchange="toggleRedirectFields()">
+                                <option value="none">No Action</option>
+                                <option value="product">Go to Product</option>
+                                <option value="category">Go to Category</option>
+                                <option value="external">External Link</option>
+                            </select>
+                        </div>
+                        <div class="form-group" id="redirectUrlGroup" style="display: none;">
+                            <label for="redirectUrl">Link URL</label>
+                            <input type="url" id="redirectUrl" class="form-control" placeholder="https://...">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="bannerActive" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                        <span style="margin-left: 10px; font-weight: 500;">Active (Show on Home Page)</span>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline" onclick="AdminAPI.closeModal('bannerModal')">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="saveBanner()">
+                    <i class="fas fa-save"></i> Save Banner
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/admin.js"></script>
+    <script>
+        let banners = [];
+
+        // Image validation settings
+        const IMAGE_SPECS = {
+            desktop: {
+                maxSize: 2 * 1024 * 1024, // 2MB
+                recommendedWidth: 1920,
+                recommendedHeight: 600,
+                aspectRatio: 16/5,
+                aspectTolerance: 0.15 // 15% tolerance
+            },
+            mobile: {
+                maxSize: 2 * 1024 * 1024, // 2MB
+                recommendedWidth: 1080,
+                recommendedHeight: 1350,
+                aspectRatio: 4/5,
+                aspectTolerance: 0.15
+            }
+        };
+
+        document.addEventListener('DOMContentLoaded', async function() {
+            await loadBanners();
+            initializeUploadZones();
+        });
+
+        // Initialize drag & drop for upload zones
+        function initializeUploadZones() {
+            ['desktop', 'mobile'].forEach(type => {
+                const zone = document.getElementById(`${type}UploadZone`);
+                const input = document.getElementById(`${type}FileInput`);
+
+                // Drag events
+                zone.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    zone.classList.add('dragover');
+                });
+
+                zone.addEventListener('dragleave', () => {
+                    zone.classList.remove('dragover');
+                });
+
+                zone.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    zone.classList.remove('dragover');
+                    const files = e.dataTransfer.files;
+                    if (files.length > 0) {
+                        handleImageUpload(files[0], type);
+                    }
+                });
+
+                // File input change
+                input.addEventListener('change', (e) => {
+                    if (e.target.files.length > 0) {
+                        handleImageUpload(e.target.files[0], type);
+                    }
+                });
+            });
+        }
+
+        // Validate and upload image
+        async function handleImageUpload(file, type) {
+            const errorEl = document.getElementById(`${type}Error`);
+            const specs = IMAGE_SPECS[type];
+
+            // Reset error
+            errorEl.textContent = '';
+            errorEl.classList.remove('show');
+
+            // Validate file type
+            const validTypes = ['image/jpeg', 'image/png', 'image/webp'];
+            if (!validTypes.includes(file.type)) {
+                showError(type, 'Invalid file type. Use JPG, PNG, or WEBP.');
+                return;
+            }
+
+            // Validate file size
+            if (file.size > specs.maxSize) {
+                showError(type, `File too large. Maximum size is ${specs.maxSize / 1024 / 1024}MB.`);
+                return;
+            }
+
+            // Load image to check dimensions
+            const img = new Image();
+            const reader = new FileReader();
+
+            reader.onload = (e) => {
+                img.onload = async () => {
+                    // Show preview immediately with base64
+                    setPreview(type, e.target.result);
+
+                    // Upload to server
+                    await uploadImage(file, type);
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function showError(type, message) {
+            const errorEl = document.getElementById(`${type}Error`);
+            errorEl.textContent = message;
+            errorEl.classList.add('show');
+        }
+
+        function setPreview(type, src) {
+            const zone = document.getElementById(`${type}UploadZone`);
+            const preview = document.getElementById(`${type}Preview`);
+            const clearBtn = document.getElementById(`${type}ClearBtn`);
+
+            preview.src = src;
+            zone.classList.add('has-image');
+            clearBtn.style.display = 'inline-flex';
+        }
+
+        function clearImage(type) {
+            const zone = document.getElementById(`${type}UploadZone`);
+            const preview = document.getElementById(`${type}Preview`);
+            const clearBtn = document.getElementById(`${type}ClearBtn`);
+            const input = document.getElementById(`${type}FileInput`);
+            const urlInput = document.getElementById(`${type}ImageUrl`);
+            const errorEl = document.getElementById(`${type}Error`);
+
+            preview.src = '';
+            zone.classList.remove('has-image');
+            clearBtn.style.display = 'none';
+            input.value = '';
+            urlInput.value = '';
+            errorEl.textContent = '';
+            errorEl.classList.remove('show');
+        }
+
+        async function uploadImage(file, type) {
+            const progressEl = document.getElementById(`${type}Progress`);
+            const progressBar = document.getElementById(`${type}ProgressBar`);
+
+            progressEl.classList.add('show');
+            progressBar.style.width = '0%';
+
+            try {
+                // Create FormData for upload
+                const formData = new FormData();
+                formData.append('image', file);
+                formData.append('type', 'banner');
+
+                // Simulate progress (or use real XHR for actual progress)
+                let progress = 0;
+                const progressInterval = setInterval(() => {
+                    progress += 10;
+                    progressBar.style.width = Math.min(progress, 90) + '%';
+                }, 100);
+
+                // Upload to server using CONFIG.API_BASE (auto-detects environment)
+                const uploadUrl = CONFIG.API_BASE + '/upload/banner';
+                const session = localStorage.getItem('admin_session');
+
+                const fetchOptions = {
+                    method: 'POST',
+                    body: formData,
+                    headers: {}
+                };
+
+                if (session) {
+                    fetchOptions.headers['Authorization'] = 'Bearer ' + session;
+                }
+
+                const fetchResponse = await fetch(uploadUrl, fetchOptions);
+                const response = await fetchResponse.json();
+
+                clearInterval(progressInterval);
+                progressBar.style.width = '100%';
+
+                setTimeout(() => {
+                    progressEl.classList.remove('show');
+                }, 500);
+
+                console.log('Upload response:', response);
+
+                if (response.success && response.data && response.data.url) {
+                    document.getElementById(`${type}ImageUrl`).value = response.data.url;
+                    // Update preview with correct path for admin folder
+                    setPreview(type, AdminAPI.getAdminImagePath(response.data.url));
+                    console.log(`${type} image URL set to:`, response.data.url);
+                    AdminAPI.showToast(`${type === 'desktop' ? 'Desktop' : 'Mobile'} image uploaded`, 'success');
+                } else {
+                    console.error('Upload failed:', response);
+                    showError(type, response.message || 'Upload failed');
+                    // Keep preview but show error
+                }
+            } catch (error) {
+                progressEl.classList.remove('show');
+                showError(type, 'Upload failed. Please try again.');
+                console.error('Upload error:', error);
+            }
+        }
+
+        async function loadBanners() {
+            const container = document.getElementById('bannersGrid');
+            container.innerHTML = '<div class="loading"><div class="loading-spinner"></div>Loading banners...</div>';
+
+            try {
+                const response = await AdminAPI.call('/banners', 'GET');
+                if (response.success) {
+                    banners = response.data || [];
+                    renderBanners();
+                } else {
+                    container.innerHTML = '<div class="empty-state"><i class="fas fa-exclamation-circle"></i><h3>Failed to load banners</h3></div>';
+                }
+            } catch (error) {
+                console.error('Failed to load banners:', error);
+                container.innerHTML = '<div class="empty-state"><i class="fas fa-exclamation-circle"></i><h3>Failed to load banners</h3></div>';
+            }
+        }
+
+        function renderBanners() {
+            const container = document.getElementById('bannersGrid');
+
+            if (!banners || banners.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state" style="grid-column: 1 / -1; padding: 60px 20px;">
+                        <i class="fas fa-images" style="font-size: 64px; color: var(--gray-light); margin-bottom: 20px;"></i>
+                        <h3 style="color: var(--dark); margin-bottom: 8px;">No Banners Yet</h3>
+                        <p style="color: var(--gray);">Create your first banner to display on the home page</p>
+                        <button class="btn btn-primary" style="margin-top: 20px;" onclick="openAddModal()">
+                            <i class="fas fa-plus"></i> Add First Banner
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = banners.map((banner, index) => `
+                <div class="banner-card" data-id="${banner.id}" draggable="true">
+                    <div class="banner-status-indicator">
+                        ${AdminAPI.getStatusBadge(banner.is_active == 1 ? 'active' : 'inactive')}
+                    </div>
+                    <div class="banner-images">
+                        <div class="banner-image-container">
+                            <img src="${AdminAPI.getAdminImagePath(banner.desktop_image || banner.image)}"
+                                 alt="${banner.title || 'Banner'}"
+                                 onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 400 150%22><rect fill=%22%23e2e8f0%22 width=%22400%22 height=%22150%22/><text x=%2250%%22 y=%2250%%22 fill=%22%2394a3b8%22 font-size=%2216%22 text-anchor=%22middle%22 dy=%22.3em%22>Desktop Image</text></svg>'">
+                            <span class="banner-image-label"><i class="fas fa-desktop"></i> Desktop</span>
+                        </div>
+                        <div class="banner-image-container">
+                            <img src="${AdminAPI.getAdminImagePath(banner.mobile_image || banner.image)}"
+                                 alt="${banner.title || 'Banner'}"
+                                 onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 200 250%22><rect fill=%22%23e2e8f0%22 width=%22200%22 height=%22250%22/><text x=%2250%%22 y=%2250%%22 fill=%22%2394a3b8%22 font-size=%2212%22 text-anchor=%22middle%22 dy=%22.3em%22>Mobile</text></svg>'">
+                            <span class="banner-image-label"><i class="fas fa-mobile-alt"></i> Mobile</span>
+                        </div>
+                    </div>
+                    <div class="banner-card-body">
+                        <div class="banner-card-title">${banner.title || 'Untitled Banner'}</div>
+                        <div class="banner-card-desc">${banner.description || 'No description'}</div>
+                        <div class="banner-card-footer">
+                            <div class="drag-handle" title="Drag to reorder">
+                                <i class="fas fa-grip-vertical"></i>
+                                <span>Order: ${index + 1}</span>
+                            </div>
+                            <div class="action-btns">
+                                <button class="action-btn edit" onclick="editBanner(${banner.id})" title="Edit">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="action-btn delete" onclick="deleteBanner(${banner.id})" title="Delete">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            // Initialize drag and drop
+            initDragDrop();
+        }
+
+        function initDragDrop() {
+            const container = document.getElementById('bannersGrid');
+            const cards = container.querySelectorAll('.banner-card');
+
+            cards.forEach(card => {
+                card.addEventListener('dragstart', handleDragStart);
+                card.addEventListener('dragend', handleDragEnd);
+                card.addEventListener('dragover', handleDragOver);
+                card.addEventListener('dragleave', handleDragLeave);
+                card.addEventListener('drop', handleDrop);
+            });
+        }
+
+        let draggedItem = null;
+
+        function handleDragStart(e) {
+            draggedItem = this;
+            this.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+            e.dataTransfer.setData('text/html', this.innerHTML);
+        }
+
+        function handleDragEnd(e) {
+            this.classList.remove('dragging');
+            document.querySelectorAll('.banner-card').forEach(card => {
+                card.classList.remove('drag-over');
+            });
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            if (this !== draggedItem) {
+                this.classList.add('drag-over');
+            }
+        }
+
+        function handleDragLeave(e) {
+            this.classList.remove('drag-over');
+        }
+
+        async function handleDrop(e) {
+            e.preventDefault();
+            this.classList.remove('drag-over');
+
+            if (this !== draggedItem) {
+                const container = document.getElementById('bannersGrid');
+                const allCards = [...container.querySelectorAll('.banner-card')];
+                const fromIndex = allCards.indexOf(draggedItem);
+                const toIndex = allCards.indexOf(this);
+
+                if (fromIndex < toIndex) {
+                    this.parentNode.insertBefore(draggedItem, this.nextSibling);
+                } else {
+                    this.parentNode.insertBefore(draggedItem, this);
+                }
+
+                // Save new order
+                await saveOrder();
+            }
+        }
+
+        async function saveOrder() {
+            const container = document.getElementById('bannersGrid');
+            const cards = container.querySelectorAll('.banner-card');
+            const order = [...cards].map(card => card.dataset.id);
+
+            try {
+                const response = await AdminAPI.call('/banners', 'POST', {
+                    action: 'reorder',
+                    order: order
+                });
+
+                if (response.success) {
+                    AdminAPI.showToast('Banner order updated', 'success');
+                    // Update order numbers displayed
+                    loadBanners();
+                }
+            } catch (error) {
+                AdminAPI.showToast('Failed to save order', 'error');
+            }
+        }
+
+        function toggleRedirectFields() {
+            const type = document.getElementById('redirectType').value;
+            const urlGroup = document.getElementById('redirectUrlGroup');
+            urlGroup.style.display = (type === 'external' || type === 'product' || type === 'category') ? 'block' : 'none';
+        }
+
+        function openAddModal() {
+            document.getElementById('modalTitle').innerHTML = '<i class="fas fa-image"></i> Add Banner';
+            document.getElementById('bannerForm').reset();
+            document.getElementById('bannerId').value = '';
+            document.getElementById('bannerActive').checked = true;
+            document.getElementById('redirectUrlGroup').style.display = 'none';
+
+            // Clear image previews
+            clearImage('desktop');
+            clearImage('mobile');
+
+            AdminAPI.openModal('bannerModal');
+        }
+
+        async function editBanner(id) {
+            try {
+                const response = await AdminAPI.call(`/banners/${id}`, 'GET');
+                if (response.success) {
+                    const banner = response.data;
+
+                    document.getElementById('modalTitle').innerHTML = '<i class="fas fa-edit"></i> Edit Banner';
+                    document.getElementById('bannerId').value = banner.id;
+                    document.getElementById('bannerTitle').value = banner.title || '';
+                    document.getElementById('bannerDescription').value = banner.description || banner.caption || '';
+                    document.getElementById('redirectType').value = banner.redirect_type || 'none';
+                    document.getElementById('redirectUrl').value = banner.redirect_url || '';
+                    document.getElementById('bannerActive').checked = banner.is_active == 1;
+
+                    // Set desktop image
+                    if (banner.desktop_image || banner.image) {
+                        const desktopImg = banner.desktop_image || banner.image;
+                        setPreview('desktop', AdminAPI.getAdminImagePath(desktopImg));
+                        document.getElementById('desktopImageUrl').value = desktopImg;
+                    } else {
+                        clearImage('desktop');
+                    }
+
+                    // Set mobile image
+                    if (banner.mobile_image || banner.image) {
+                        const mobileImg = banner.mobile_image || banner.image;
+                        setPreview('mobile', AdminAPI.getAdminImagePath(mobileImg));
+                        document.getElementById('mobileImageUrl').value = mobileImg;
+                    } else {
+                        clearImage('mobile');
+                    }
+
+                    toggleRedirectFields();
+                    AdminAPI.openModal('bannerModal');
+                }
+            } catch (error) {
+                AdminAPI.showToast('Failed to load banner', 'error');
+            }
+        }
+
+        async function saveBanner() {
+            const desktopImage = document.getElementById('desktopImageUrl').value;
+            const mobileImage = document.getElementById('mobileImageUrl').value;
+
+            console.log('Saving banner with:', { desktopImage, mobileImage });
+
+            // Validate required images
+            if (!desktopImage) {
+                showError('desktop', 'Desktop banner image is required');
+                AdminAPI.showToast('Please upload a desktop banner image', 'error');
+                return;
+            }
+
+            if (!mobileImage) {
+                showError('mobile', 'Mobile banner image is required');
+                AdminAPI.showToast('Please upload a mobile banner image', 'error');
+                return;
+            }
+
+            const id = document.getElementById('bannerId').value;
+            const data = {
+                desktop_image: desktopImage,
+                mobile_image: mobileImage,
+                title: document.getElementById('bannerTitle').value,
+                description: document.getElementById('bannerDescription').value,
+                redirect_type: document.getElementById('redirectType').value,
+                redirect_url: document.getElementById('redirectUrl').value,
+                is_active: document.getElementById('bannerActive').checked
+            };
+
+            console.log('Banner data to save:', data);
+
+            try {
+                let response;
+                if (id) {
+                    data.id = id;
+                    response = await AdminAPI.call('/banners', 'PUT', data);
+                } else {
+                    response = await AdminAPI.call('/banners', 'POST', data);
+                }
+
+                console.log('Save response:', response);
+
+                if (response.success) {
+                    AdminAPI.showToast(response.message || 'Banner saved successfully', 'success');
+                    AdminAPI.closeModal('bannerModal');
+                    loadBanners();
+                } else {
+                    AdminAPI.showToast(response.message || 'Failed to save banner', 'error');
+                }
+            } catch (error) {
+                console.error('Save banner error:', error);
+                AdminAPI.showToast('Failed to save banner', 'error');
+            }
+        }
+
+        async function deleteBanner(id) {
+            if (!await AdminAPI.confirmAction('Are you sure you want to delete this banner?')) {
+                return;
+            }
+
+            try {
+                const response = await AdminAPI.call(`/banners/${id}`, 'DELETE');
+                if (response.success) {
+                    AdminAPI.showToast('Banner deleted', 'success');
+                    loadBanners();
+                } else {
+                    AdminAPI.showToast(response.message || 'Failed to delete banner', 'error');
+                }
+            } catch (error) {
+                AdminAPI.showToast('Failed to delete banner', 'error');
+            }
+        }
+    </script>
+</body>
+</html>

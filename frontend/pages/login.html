@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - KPS Nursery</title>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="../css/style.css?v=6.0">
+    <link rel="stylesheet" href="../css/login.css?v=1.0">
+</head>
+<body class="login-page">
+    <div class="login-container">
+        <!-- Background Decoration -->
+        <div class="login-bg-decoration">
+            <div class="circle circle-1"></div>
+            <div class="circle circle-2"></div>
+            <div class="circle circle-3"></div>
+        </div>
+
+        <!-- Logo -->
+        <div class="login-logo">
+            <img src="../logo.png" alt="KPS Nursery">
+        </div>
+
+        <!-- Login Form Section -->
+        <div class="login-card">
+            <!-- Step 1: Mobile/Email Number -->
+            <div class="login-step" id="step-mobile">
+                <h2>Welcome!</h2>
+                <p class="step-description">Enter your mobile number or email to continue</p>
+
+                <!-- Login Method Toggle -->
+                <div class="login-method-toggle">
+                    <button type="button" class="toggle-btn active" id="toggle-mobile">
+                        <i class="fas fa-mobile-alt"></i> Mobile
+                    </button>
+                    <button type="button" class="toggle-btn" id="toggle-email">
+                        <i class="fas fa-envelope"></i> Email
+                    </button>
+                </div>
+
+                <!-- Mobile Form -->
+                <form id="mobile-form" class="login-form">
+                    <div class="input-group">
+                        <div class="input-prefix">
+                            <span class="country-code">+91</span>
+                        </div>
+                        <input type="tel" id="mobile-input" placeholder="Enter mobile number"
+                               maxlength="10" pattern="[0-9]{10}" autocomplete="tel" required>
+                    </div>
+                    <p class="input-hint">We'll send you an OTP for verification</p>
+
+                    <button type="submit" class="btn btn-primary btn-block" id="send-otp-btn">
+                        <span class="btn-text">Continue</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                </form>
+
+                <!-- Email Form -->
+                <form id="email-form" class="login-form hidden">
+                    <div class="input-group">
+                        <div class="input-prefix">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <input type="email" id="email-login-input" placeholder="Enter email address"
+                               autocomplete="email" required>
+                    </div>
+                    <p class="input-hint">We'll send you an OTP to your email</p>
+
+                    <button type="submit" class="btn btn-primary btn-block" id="send-email-otp-btn">
+                        <span class="btn-text">Continue</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                </form>
+
+                <div class="divider">
+                    <span>or</span>
+                </div>
+
+                <button class="btn btn-outline btn-block" id="guest-login-btn">
+                    <i class="fas fa-user"></i>
+                    Continue as Guest
+                </button>
+            </div>
+
+            <!-- Step 2: OTP Verification -->
+            <div class="login-step hidden" id="step-otp">
+                <button class="back-btn" id="back-to-mobile">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                <h2>Verify OTP</h2>
+                <p class="step-description">Enter the 6-digit code sent to <span id="display-mobile"></span></p>
+
+                <form id="otp-form" class="login-form">
+                    <div class="otp-inputs">
+                        <input type="text" class="otp-input" maxlength="1" data-index="0" inputmode="numeric" pattern="[0-9]">
+                        <input type="text" class="otp-input" maxlength="1" data-index="1" inputmode="numeric" pattern="[0-9]">
+                        <input type="text" class="otp-input" maxlength="1" data-index="2" inputmode="numeric" pattern="[0-9]">
+                        <input type="text" class="otp-input" maxlength="1" data-index="3" inputmode="numeric" pattern="[0-9]">
+                        <input type="text" class="otp-input" maxlength="1" data-index="4" inputmode="numeric" pattern="[0-9]">
+                        <input type="text" class="otp-input" maxlength="1" data-index="5" inputmode="numeric" pattern="[0-9]">
+                    </div>
+
+                    <div class="resend-section">
+                        <span id="resend-timer">Resend OTP in <strong>30s</strong></span>
+                        <button type="button" class="btn-link hidden" id="resend-otp-btn">
+                            <i class="fas fa-redo"></i> Resend OTP
+                        </button>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-block" id="verify-otp-btn" disabled>
+                        <span class="btn-text">Verify & Continue</span>
+                        <i class="fas fa-check"></i>
+                    </button>
+                </form>
+
+                <!-- Demo OTP hint (remove in production) -->
+                <div class="demo-hint">
+                    <i class="fas fa-info-circle"></i>
+                    <span>Demo: Use OTP <strong>123456</strong></span>
+                </div>
+            </div>
+
+            <!-- Step 3: Profile Setup (New Users) -->
+            <div class="login-step hidden" id="step-profile">
+                <h2>Complete Profile</h2>
+                <p class="step-description">Tell us a bit about yourself</p>
+
+                <form id="profile-form" class="login-form">
+                    <div class="form-group">
+                        <label for="name-input">Full Name <span class="required">*</span></label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-user"></i>
+                            <input type="text" id="name-input" placeholder="Enter your name" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email-input">Email Address <span class="optional">(Optional)</span></label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-envelope"></i>
+                            <input type="email" id="email-input" placeholder="Enter your email">
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-block" id="complete-profile-btn">
+                        <span class="btn-text">Start Shopping</span>
+                        <i class="fas fa-shopping-bag"></i>
+                    </button>
+                </form>
+
+                <button class="btn-link skip-btn" id="skip-profile-btn">
+                    Skip for now <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="login-footer">
+            <p>By continuing, you agree to our</p>
+            <div class="footer-links">
+                <a href="#" onclick="openTerms()">Terms of Service</a>
+                <span>&</span>
+                <a href="#" onclick="openPrivacy()">Privacy Policy</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loading-overlay">
+        <div class="loading-spinner"></div>
+    </div>
+
+    <!-- Toast Notifications Container -->
+    <div id="toast-container"></div>
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- Common Utilities -->
+    <script src="../js/common.js"></script>
+
+    <!-- Login JS -->
+    <script src="../js/login.js"></script>
+</body>
+</html>

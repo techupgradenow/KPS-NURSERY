@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <!-- SEO Meta Tags - Admin Panel (noindex) -->
+    <title>Products Management - SK Bakers Admin Panel</title>
+    <meta name="description" content="SK Bakers Admin - Manage products, categories, and inventory.">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="googlebot" content="noindex, nofollow">
+    <meta name="author" content="SK Bakers Kovilpatti">
+
+    <!-- Favicon & App Icons -->
+    <link rel="icon" type="image/webp" href="../../logo.webp">
+    <link rel="icon" type="image/png" href="../../assets/logo.png">
+    <link rel="shortcut icon" type="image/png" href="../../assets/logo.png">
+    <link rel="apple-touch-icon" href="../../assets/logo.png">
+
+    <!-- Theme Color -->
+    <meta name="theme-color" content="#B03359">
+    <meta name="msapplication-TileColor" content="#B03359">
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/admin.css?v=5.0">
+</head>
+<body>
+    <div class="admin-layout">
+        <!-- Mobile Sidebar Overlay -->
+        <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <img src="../../logo.webp" alt="SK Bakers" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 40 40%22><rect fill=%22%23B03359%22 width=%2240%22 height=%2240%22 rx=%228%22/><text x=%2250%%22 y=%2255%%22 fill=%22white%22 font-size=%2214%22 font-weight=%22bold%22 text-anchor=%22middle%22>SK</text></svg>'">
+                <h2>SK Bakers</h2>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="index.html" class="nav-item">
+                    <i class="fas fa-th-large"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="orders.html" class="nav-item">
+                    <i class="fas fa-shopping-bag"></i>
+                    <span>Orders</span>
+                </a>
+                <a href="products.html" class="nav-item active">
+                    <i class="fas fa-box"></i>
+                    <span>Products</span>
+                </a>
+                <a href="menu.html" class="nav-item">
+                    <i class="fas fa-utensils"></i>
+                    <span>Menu Card</span>
+                </a>
+                <a href="categories.html" class="nav-item">
+                    <i class="fas fa-folder"></i>
+                    <span>Categories</span>
+                </a>
+                <a href="customers.html" class="nav-item">
+                    <i class="fas fa-users"></i>
+                    <span>Customers</span>
+                </a>
+                <div class="nav-divider"></div>
+                <a href="banners.html" class="nav-item">
+                    <i class="fas fa-images"></i>
+                    <span>Banners</span>
+                </a>
+                <a href="popups.html" class="nav-item">
+                    <i class="fas fa-bullhorn"></i>
+                    <span>Offer Popups</span>
+                </a>
+                <div class="nav-divider"></div>
+                <a href="#" class="nav-item" onclick="AdminAPI.logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="admin-header">
+                <div class="header-left">
+                    <button class="toggle-sidebar">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <h1 class="page-title">Products</h1>
+                </div>
+                <div class="header-right">
+                    <div class="admin-profile">
+                        <div class="admin-avatar">A</div>
+                        <div class="admin-info">
+                            <div class="admin-name">Admin</div>
+                            <div class="admin-role">Administrator</div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <div class="content-area">
+                <!-- Filters -->
+                <div class="filters-bar">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="searchInput" placeholder="Search products..." onkeyup="handleSearch(event)">
+                    </div>
+                    <select class="form-control filter-select" id="categoryFilter" onchange="loadProducts()">
+                        <option value="">All Categories</option>
+                    </select>
+                    <select class="form-control filter-select" id="statusFilter" onchange="loadProducts()">
+                        <option value="">All Status</option>
+                        <option value="active">Active</option>
+                        <option value="inactive">Inactive</option>
+                    </select>
+                    <button class="btn btn-primary" onclick="openAddModal()">
+                        <i class="fas fa-plus"></i> Add Product
+                    </button>
+                </div>
+
+                <!-- Products Table -->
+                <div class="card">
+                    <div class="card-body">
+                        <div class="table-container">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Image</th>
+                                        <th>Product Name</th>
+                                        <th>Category</th>
+                                        <th>Price</th>
+                                        <th>Stock</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="productsTable">
+                                    <tr>
+                                        <td colspan="7" class="loading">
+                                            <div class="loading-spinner"></div>
+                                            Loading...
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="pagination" id="pagination"></div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Add/Edit Product Modal -->
+    <div class="modal-overlay" id="productModal">
+        <div class="modal" style="max-width: 700px;">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modalTitle">Add Product</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="productForm">
+                    <input type="hidden" id="productId">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="productName">Product Name *</label>
+                            <input type="text" id="productName" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="productCategory">Category *</label>
+                            <select id="productCategory" class="form-control" required>
+                                <option value="">Select Category</option>
+                            </select>
+                        </div>
+                    </div>
+                    <!-- Popular Item Toggle - Placed prominently -->
+                    <div class="form-group" style="background: linear-gradient(135deg, #fff8e1 0%, #ffecb3 100%); padding: 12px 16px; border-radius: 10px; border: 1px solid #ffd54f; margin-bottom: 15px;">
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <label class="toggle-switch" style="margin: 0;">
+                                <input type="checkbox" id="productPopular">
+                                <span class="toggle-slider"></span>
+                            </label>
+                            <div>
+                                <span style="font-weight: 600; color: #f57c00;"><i class="fas fa-star" style="margin-right: 6px;"></i>Popular Item</span>
+                                <small style="display: block; color: #ff8f00; margin-top: 2px;">Enable to show in "Popular Items" section on homepage</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="productDescription">Description</label>
+                        <textarea id="productDescription" class="form-control" rows="3"></textarea>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="productPrice">Price (₹) *</label>
+                            <input type="number" id="productPrice" class="form-control" step="0.01" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="productDiscountPrice">Discount Price (₹)</label>
+                            <input type="number" id="productDiscountPrice" class="form-control" step="0.01">
+                        </div>
+                        <div class="form-group">
+                            <label for="productUnit">Unit</label>
+                            <input type="text" id="productUnit" class="form-control" value="kg">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="productStock">Stock Quantity</label>
+                            <input type="number" id="productStock" class="form-control" value="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="productDisplayOrder">Display Order</label>
+                            <input type="number" id="productDisplayOrder" class="form-control" value="0">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Product Image</label>
+                        <div class="image-upload-container" id="productUploadContainer">
+                            <div class="image-preview" id="productImagePreview">
+                                <img id="productPreviewImg" alt="Preview" style="display: none;">
+                                <div class="upload-placeholder" id="productPlaceholder" style="display: block;">
+                                    <i class="fas fa-cloud-upload-alt"></i>
+                                    <p>Click to upload or drag and drop</p>
+                                    <span>JPG, PNG, GIF, WEBP (Max 5MB)</span>
+                                </div>
+                            </div>
+                            <input type="file" id="productFileInput" accept="image/jpeg,image/png,image/gif,image/webp" style="display: none;">
+                            <input type="hidden" id="productImageUrl">
+                            <div class="upload-actions">
+                                <button type="button" class="btn btn-outline btn-sm" onclick="document.getElementById('productFileInput').click()">
+                                    <i class="fas fa-upload"></i> Choose File
+                                </button>
+                                <button type="button" class="btn btn-outline btn-sm" id="productClearBtn" style="display: none;">
+                                    <i class="fas fa-times"></i> Remove
+                                </button>
+                            </div>
+                            <div class="upload-progress" id="productProgress" style="display: none;">
+                                <div class="progress-bar"><div class="progress-fill" id="productProgressFill"></div></div>
+                                <span id="productProgressText">Uploading...</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="productActive" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                        <span style="margin-left: 10px;">Active</span>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline" onclick="AdminAPI.closeModal('productModal')">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="saveProduct()">Save Product</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/admin.js"></script>
+    <script>
+        let currentPage = 1;
+        let categories = [];
+        let productUploader = null;
+
+        document.addEventListener('DOMContentLoaded', async function() {
+            await loadCategories();
+            await loadProducts();
+            // Initialize centralized image uploader
+            productUploader = AdminAPI.initImageUploader(AdminAPI.getImageUploaderConfig('product'));
+            // Add clear button handler
+            document.getElementById('productClearBtn').addEventListener('click', () => productUploader.clearPreview());
+        });
+
+        async function loadCategories() {
+            try {
+                const response = await AdminAPI.call('/categories', 'GET');
+                if (response.success) {
+                    categories = response.data;
+                    const select = document.getElementById('categoryFilter');
+                    const modalSelect = document.getElementById('productCategory');
+
+                    categories.forEach(cat => {
+                        select.innerHTML += `<option value="${cat.id}">${cat.name}</option>`;
+                        modalSelect.innerHTML += `<option value="${cat.id}">${cat.name}</option>`;
+                    });
+                }
+            } catch (error) {
+                console.error('Failed to load categories:', error);
+            }
+        }
+
+        async function loadProducts() {
+            const tbody = document.getElementById('productsTable');
+            tbody.innerHTML = '<tr><td colspan="7" class="loading"><div class="loading-spinner"></div>Loading...</td></tr>';
+
+            try {
+                const params = {
+                    page: currentPage,
+                    limit: 20
+                };
+
+                const search = document.getElementById('searchInput').value;
+                const category = document.getElementById('categoryFilter').value;
+                const status = document.getElementById('statusFilter').value;
+
+                if (search) params.search = search;
+                if (category) params.category_id = category;
+                if (status) params.status = status;
+
+                const queryString = new URLSearchParams(params).toString();
+                const response = await AdminAPI.call(`/products?${queryString}`, 'GET');
+
+                if (response.success) {
+                    renderProducts(response.data.data);
+                    renderPagination(response.data.pagination);
+                } else {
+                    tbody.innerHTML = '<tr><td colspan="7" class="empty-state">Failed to load products</td></tr>';
+                }
+            } catch (error) {
+                console.error('Failed to load products:', error);
+                tbody.innerHTML = '<tr><td colspan="7" class="empty-state">Failed to load products</td></tr>';
+            }
+        }
+
+        function renderProducts(products) {
+            const tbody = document.getElementById('productsTable');
+
+            if (products.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7" class="empty-state">
+                            <i class="fas fa-box"></i>
+                            <h3>No products found</h3>
+                            <p>Start by adding your first product</p>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = products.map(product => `
+                <tr>
+                    <td><img src="${AdminAPI.getAdminImagePath(product.image)}" alt="${product.name}" onerror="this.src='../../assets/logo.png'"></td>
+                    <td>
+                        <strong>${product.name}</strong>
+                        <br><small style="color: var(--gray);">${product.unit}</small>
+                    </td>
+                    <td>${product.category_name}</td>
+                    <td>
+                        ${product.discount_price ? `<del style="color: var(--gray);">₹${product.price}</del> <strong style="color: var(--success);">₹${product.discount_price}</strong>` : `<strong>₹${product.price}</strong>`}
+                    </td>
+                    <td>
+                        <span style="color: ${product.stock < 10 ? 'var(--danger)' : 'var(--success)'}">${product.stock}</span>
+                    </td>
+                    <td>${AdminAPI.getStatusBadge(product.is_active ? 'active' : 'inactive')}</td>
+                    <td>
+                        <div class="action-btns">
+                            <button class="action-btn edit" onclick="editProduct(${product.id})" title="Edit">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="action-btn delete" onclick="deleteProduct(${product.id})" title="Delete">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function renderPagination(pagination) {
+            const container = document.getElementById('pagination');
+            const { current_page, total_pages } = pagination;
+
+            if (total_pages <= 1) {
+                container.innerHTML = '';
+                return;
+            }
+
+            let html = `
+                <button ${current_page === 1 ? 'disabled' : ''} onclick="goToPage(${current_page - 1})">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+            `;
+
+            for (let i = 1; i <= total_pages; i++) {
+                if (i === 1 || i === total_pages || (i >= current_page - 2 && i <= current_page + 2)) {
+                    html += `<button class="${i === current_page ? 'active' : ''}" onclick="goToPage(${i})">${i}</button>`;
+                } else if (i === current_page - 3 || i === current_page + 3) {
+                    html += `<button disabled>...</button>`;
+                }
+            }
+
+            html += `
+                <button ${current_page === total_pages ? 'disabled' : ''} onclick="goToPage(${current_page + 1})">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            `;
+
+            container.innerHTML = html;
+        }
+
+        function goToPage(page) {
+            currentPage = page;
+            loadProducts();
+        }
+
+        const handleSearch = AdminAPI.debounce(function(event) {
+            currentPage = 1;
+            loadProducts();
+        }, 300);
+
+        function openAddModal() {
+            document.getElementById('modalTitle').textContent = 'Add Product';
+            document.getElementById('productForm').reset();
+            document.getElementById('productId').value = '';
+            document.getElementById('productActive').checked = true;
+            document.getElementById('productPopular').checked = false;
+            if (productUploader) productUploader.clearPreview();
+            AdminAPI.openModal('productModal');
+        }
+
+        async function editProduct(id) {
+            try {
+                const response = await AdminAPI.call(`/products/${id}`, 'GET');
+                if (response.success) {
+                    const product = response.data;
+                    document.getElementById('modalTitle').textContent = 'Edit Product';
+                    document.getElementById('productId').value = product.id;
+                    document.getElementById('productName').value = product.name;
+                    document.getElementById('productCategory').value = product.category_id;
+                    document.getElementById('productDescription').value = product.description || '';
+                    document.getElementById('productPrice').value = product.price;
+                    document.getElementById('productDiscountPrice').value = product.discount_price || '';
+                    document.getElementById('productUnit').value = product.unit || 'kg';
+                    document.getElementById('productStock').value = product.stock || 0;
+                    document.getElementById('productDisplayOrder').value = product.display_order || 0;
+                    document.getElementById('productActive').checked = product.is_active == 1;
+                    document.getElementById('productPopular').checked = product.is_popular == 1;
+                    if (product.image && productUploader) { productUploader.setPreview(AdminAPI.getAdminImagePath(product.image)); } else if (productUploader) { productUploader.clearPreview(); }
+                    AdminAPI.openModal('productModal');
+                }
+            } catch (error) {
+                AdminAPI.showToast('Failed to load product', 'error');
+            }
+        }
+
+        async function saveProduct() {
+            const id = document.getElementById('productId').value;
+            const data = {
+                name: document.getElementById('productName').value,
+                category_id: document.getElementById('productCategory').value,
+                description: document.getElementById('productDescription').value,
+                price: parseFloat(document.getElementById('productPrice').value),
+                discount_price: document.getElementById('productDiscountPrice').value || null,
+                unit: document.getElementById('productUnit').value,
+                stock: parseInt(document.getElementById('productStock').value) || 0,
+                display_order: parseInt(document.getElementById('productDisplayOrder').value) || 0,
+                image: document.getElementById('productImageUrl').value,
+                is_active: document.getElementById('productActive').checked,
+                is_popular: document.getElementById('productPopular').checked
+            };
+
+            if (!data.name || !data.category_id || !data.price) {
+                AdminAPI.showToast('Please fill all required fields', 'error');
+                return;
+            }
+
+            try {
+                let response;
+                if (id) {
+                    response = await AdminAPI.call(`/products/${id}`, 'PUT', data);
+                } else {
+                    response = await AdminAPI.call('/products', 'POST', data);
+                }
+
+                if (response.success) {
+                    AdminAPI.showToast(response.message, 'success');
+                    AdminAPI.closeModal('productModal');
+                    loadProducts();
+                } else {
+                    AdminAPI.showToast(response.message || 'Failed to save product', 'error');
+                }
+            } catch (error) {
+                AdminAPI.showToast('Failed to save product', 'error');
+            }
+        }
+
+        async function deleteProduct(id) {
+            if (!await AdminAPI.confirmAction('Are you sure you want to delete this product?')) {
+                return;
+            }
+
+            try {
+                const response = await AdminAPI.call(`/products/${id}`, 'DELETE');
+                if (response.success) {
+                    AdminAPI.showToast(response.message, 'success');
+                    loadProducts();
+                } else {
+                    AdminAPI.showToast(response.message || 'Failed to delete product', 'error');
+                }
+            } catch (error) {
+                AdminAPI.showToast('Failed to delete product', 'error');
+            }
+        }
+    </script>
+</body>
+</html>
+
+
+
+
+
+
+

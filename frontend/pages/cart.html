@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <!-- Primary SEO Meta Tags -->
+    <title>My Cart - KPS Nursery Kovilpatti | Best Cake Shop & Bakery</title>
+    <meta name="title" content="My Cart - KPS Nursery Kovilpatti | Best Cake Shop & Bakery">
+    <meta name="description" content="Review your cart at KPS Nursery Kovilpatti. Order delicious wedding cakes, birthday cakes, custom designer cakes, pastries, pizzas & desserts. Fast delivery in Kovilpatti & Thoothukudi.">
+    <meta name="keywords" content="KPS Nursery cart, cake order kovilpatti, bakery order kovilpatti, cake delivery kovilpatti, order cake online kovilpatti, best cake shop kovilpatti">
+    <meta name="author" content="KPS Nursery Kovilpatti">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="language" content="English">
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://skbakers.in/cart">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://skbakers.in/cart">
+    <meta property="og:title" content="My Cart - KPS Nursery Kovilpatti">
+    <meta property="og:description" content="Review your cart at KPS Nursery. Order delicious cakes, pastries & desserts for delivery in Kovilpatti.">
+    <meta property="og:image" content="https://skbakers.in/assets/og-image.jpg">
+    <meta property="og:site_name" content="KPS Nursery">
+    <meta property="og:locale" content="en_IN">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:url" content="https://skbakers.in/cart">
+    <meta name="twitter:title" content="My Cart - KPS Nursery Kovilpatti">
+    <meta name="twitter:description" content="Review your cart at KPS Nursery. Order delicious cakes & desserts for delivery.">
+
+    <!-- Favicon & App Icons -->
+    <link rel="icon" type="image/webp" href="../logo.png">
+    <link rel="icon" type="image/png" href="../assets/logo.png">
+    <link rel="shortcut icon" type="image/png" href="../assets/logo.png">
+    <link rel="apple-touch-icon" href="../assets/logo.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="../assets/logo.png">
+    <link rel="manifest" href="../manifest.json">
+
+    <!-- Theme Color -->
+    <meta name="theme-color" content="#2E7D32">
+    <meta name="msapplication-TileColor" content="#2E7D32">
+
+    <!-- Mobile App Meta -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="KPS Nursery">
+    <meta name="application-name" content="KPS Nursery">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Preconnect for Performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <!-- Cache Prevention -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+
+    <!-- Cart Page CSS -->
+    <link rel="stylesheet" href="../css/cart.css?v=3.2">
+
+    <!-- Inline CSS for Customer Details (ensure styles apply) -->
+    <style>
+        .customer-details-section {
+            background: #fff;
+            margin: 16px;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            border: 1px solid #E5E7EB;
+        }
+        .customer-details-section .section-header {
+            border-bottom: 1px dashed #E5E7EB;
+            background: linear-gradient(135deg, #DCFCE7 0%, #f0fdf4 100%);
+        }
+        .customer-details-card {
+            padding: 20px;
+        }
+        .customer-input-group {
+            margin-bottom: 18px;
+        }
+        .customer-input-group:last-child {
+            margin-bottom: 0;
+        }
+        .customer-input-group label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #1F2937;
+            margin-bottom: 10px;
+        }
+        .customer-input-group label i {
+            color: #166534;
+            font-size: 0.9rem;
+            width: 18px;
+        }
+        .customer-input-group label .required {
+            color: #EF4444;
+            font-weight: 700;
+        }
+        .customer-input-group input,
+        .customer-input-group textarea {
+            display: block;
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #E5E7EB;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            font-family: 'Poppins', sans-serif;
+            color: #1F2937;
+            background: #fff;
+            outline: none;
+            box-sizing: border-box;
+            transition: all 0.3s ease;
+        }
+        .customer-input-group input:focus,
+        .customer-input-group textarea:focus {
+            border-color: #166534;
+            box-shadow: 0 0 0 4px rgba(22, 101, 52, 0.1);
+        }
+        .customer-input-group input::placeholder,
+        .customer-input-group textarea::placeholder {
+            color: #9CA3AF;
+        }
+        .customer-input-group textarea {
+            resize: vertical;
+            min-height: 90px;
+            line-height: 1.5;
+        }
+        .customer-input-group .input-error {
+            display: none;
+            color: #EF4444;
+            font-size: 0.8rem;
+            margin-top: 6px;
+            padding-left: 26px;
+        }
+        .customer-input-group .input-error.show {
+            display: block;
+        }
+        .customer-input-group input.error,
+        .customer-input-group textarea.error {
+            border-color: #EF4444;
+            background: #FEF2F2;
+        }
+        .customer-input-group input.valid,
+        .customer-input-group textarea.valid {
+            border-color: #22C55E;
+            background: #F0FDF4;
+        }
+        /* Delivery Date & Time Row */
+        .delivery-datetime-row {
+            display: flex;
+            gap: 16px;
+            margin-top: 18px;
+        }
+        .delivery-datetime-row .datetime-group {
+            flex: 1;
+            margin-bottom: 0;
+        }
+        .customer-input-group select {
+            display: block;
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #E5E7EB;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            font-family: 'Poppins', sans-serif;
+            color: #1F2937;
+            background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236b7280' d='M6 8L1 3h10z'/%3E%3C/svg%3E") no-repeat right 16px center;
+            appearance: none;
+            -webkit-appearance: none;
+            outline: none;
+            box-sizing: border-box;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .customer-input-group select:focus {
+            border-color: #166534;
+            box-shadow: 0 0 0 4px rgba(22, 101, 52, 0.1);
+        }
+        .customer-input-group select.error {
+            border-color: #EF4444;
+            background-color: #FEF2F2;
+        }
+        .customer-input-group select.valid {
+            border-color: #22C55E;
+            background-color: #F0FDF4;
+        }
+        .customer-input-group input[type="date"] {
+            cursor: pointer;
+        }
+        /* Time Picker Row Styles */
+        .time-picker-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .time-select {
+            flex: 1;
+            padding: 14px 12px;
+            border: 2px solid #E5E7EB;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            font-family: 'Poppins', sans-serif;
+            color: #1F2937;
+            background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236b7280' d='M6 8L1 3h10z'/%3E%3C/svg%3E") no-repeat right 10px center;
+            appearance: none;
+            -webkit-appearance: none;
+            cursor: pointer;
+            outline: none;
+            transition: all 0.3s ease;
+            min-width: 70px;
+        }
+        .time-select:focus {
+            border-color: #166534;
+            box-shadow: 0 0 0 4px rgba(22, 101, 52, 0.1);
+        }
+        .time-select.error {
+            border-color: #EF4444;
+            background-color: #FEF2F2;
+        }
+        .time-select.valid {
+            border-color: #22C55E;
+            background-color: #F0FDF4;
+        }
+        .time-separator {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #1F2937;
+        }
+        .ampm-select {
+            min-width: 65px;
+            background-color: #DCFCE7;
+            border-color: #22C55E;
+            font-weight: 600;
+            color: #166534;
+        }
+        .time-picker-group {
+            flex: 1.2;
+        }
+        @media (max-width: 480px) {
+            .delivery-datetime-row {
+                flex-direction: column;
+                gap: 0;
+            }
+            .delivery-datetime-row .datetime-group {
+                margin-bottom: 18px;
+            }
+            .time-picker-row {
+                gap: 6px;
+            }
+            .time-select {
+                padding: 12px 8px;
+                min-width: 60px;
+                font-size: 0.9rem;
+            }
+        }
+        @media (min-width: 768px) {
+            .customer-details-section {
+                max-width: 600px;
+                margin: 20px auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="cart-header">
+            <a href="home.html" class="back-btn">
+                <i class="fas fa-arrow-left"></i>
+            </a>
+            <h1 class="header-title">My Cart</h1>
+            <button class="clear-cart-btn" id="clear-cart-btn" title="Clear Cart">
+                <i class="fas fa-trash-alt"></i>
+            </button>
+        </header>
+
+        <!-- Main Content -->
+        <main class="cart-main">
+            <!-- Cart Items Container -->
+            <section class="cart-items-section" id="cart-items-section">
+                <div class="cart-items-list" id="cart-items-container">
+                    <!-- Cart items will be dynamically loaded here -->
+                </div>
+            </section>
+
+            <!-- Empty Cart State -->
+            <div class="empty-cart-state" id="empty-cart-message" style="display: none;">
+                <div class="empty-cart-icon">
+                    <i class="fas fa-shopping-cart"></i>
+                </div>
+                <h2>Your Cart is Empty</h2>
+                <p>Looks like you haven't added anything to your cart yet.</p>
+                <a href="home.html" class="btn-shop-now">
+                    <i class="fas fa-plus"></i>
+                    Add Items
+                </a>
+            </div>
+
+            <!-- Customer Details Section -->
+            <section class="customer-details-section" id="customer-details-section">
+                <div class="section-header">
+                    <i class="fas fa-user"></i>
+                    <h2>Customer Details</h2>
+                </div>
+                <div class="customer-details-card">
+                    <div class="customer-input-group">
+                        <label for="customer-name">
+                            <i class="fas fa-user"></i>
+                            Full Name <span class="required">*</span>
+                        </label>
+                        <input type="text" id="customer-name" placeholder="Enter your full name" maxlength="50">
+                        <span class="input-error" id="customer-name-error">Please enter your name</span>
+                    </div>
+
+                    <div class="customer-input-group">
+                        <label for="customer-mobile">
+                            <i class="fas fa-phone"></i>
+                            Mobile Number <span class="required">*</span>
+                        </label>
+                        <input type="tel" id="customer-mobile" placeholder="Enter 10-digit mobile number" maxlength="10" pattern="[0-9]{10}">
+                        <span class="input-error" id="customer-mobile-error">Please enter valid 10-digit mobile</span>
+                    </div>
+
+                    <div class="customer-input-group">
+                        <label for="customer-address">
+                            <i class="fas fa-map-marker-alt"></i>
+                            Delivery Address <span class="required">*</span>
+                        </label>
+                        <textarea id="customer-address" placeholder="Enter complete delivery address (House No, Street, Area, City, Pincode)" rows="3" maxlength="200"></textarea>
+                        <span class="input-error" id="customer-address-error">Please enter your delivery address</span>
+                    </div>
+
+                    <!-- Delivery Date and Time -->
+                    <div class="delivery-datetime-row">
+                        <div class="customer-input-group datetime-group">
+                            <label for="delivery-date">
+                                <i class="fas fa-calendar-alt"></i>
+                                Delivery Date <span class="required">*</span>
+                            </label>
+                            <input type="date" id="delivery-date" required>
+                            <span class="input-error" id="delivery-date-error">Please select delivery date</span>
+                        </div>
+
+                        <div class="customer-input-group datetime-group time-picker-group">
+                            <label for="delivery-hour">
+                                <i class="fas fa-clock"></i>
+                                Delivery Time <span class="required">*</span>
+                            </label>
+                            <div class="time-picker-row">
+                                <select id="delivery-hour" class="time-select" required>
+                                    <option value="">Hour</option>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                    <option value="6">6</option>
+                                    <option value="7">7</option>
+                                    <option value="8">8</option>
+                                    <option value="9">9</option>
+                                    <option value="10">10</option>
+                                    <option value="11">11</option>
+                                    <option value="12">12</option>
+                                </select>
+                                <span class="time-separator">:</span>
+                                <select id="delivery-minute" class="time-select" required>
+                                    <option value="">Min</option>
+                                    <option value="00">00</option>
+                                    <option value="15">15</option>
+                                    <option value="30">30</option>
+                                    <option value="45">45</option>
+                                </select>
+                                <select id="delivery-ampm" class="time-select ampm-select" required>
+                                    <option value="AM">AM</option>
+                                    <option value="PM">PM</option>
+                                </select>
+                            </div>
+                            <span class="input-error" id="delivery-time-error">Please select delivery time</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Bill Details Section -->
+            <section class="bill-section" id="bill-section">
+                <div class="section-header">
+                    <i class="fas fa-receipt"></i>
+                    <h2>Bill Details</h2>
+                </div>
+                <div class="bill-card">
+                    <div class="bill-row">
+                        <span>Item Total</span>
+                        <span id="item-total">₹0.00</span>
+                    </div>
+                    <div class="bill-row">
+                        <span>Delivery Fee</span>
+                        <span class="delivery-fee" id="delivery-fee">
+                            <span class="free-badge">FREE</span>
+                        </span>
+                    </div>
+                    <div class="bill-row discount-row" id="discount-row" style="display: none;">
+                        <span>Discount</span>
+                        <span class="discount-amount" id="discount-amount">-₹0.00</span>
+                    </div>
+                    <div class="bill-row tax-row" id="tax-row">
+                        <span>Taxes & Charges</span>
+                        <span id="tax-amount">₹0.00</span>
+                    </div>
+                    <div class="bill-divider"></div>
+                    <div class="bill-row bill-total">
+                        <span>Grand Total</span>
+                        <span id="grand-total">₹0.00</span>
+                    </div>
+                    <div class="delivery-time-info" id="delivery-time-info" style="display: none;">
+                        <i class="fas fa-clock"></i>
+                        <span>Estimated delivery: <strong id="estimated-time">30-45 mins</strong></span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Coupon Section - Hidden for now
+            <section class="coupon-section" id="coupon-section">
+                <div class="coupon-card">
+                    <div class="coupon-icon">
+                        <i class="fas fa-tag"></i>
+                    </div>
+                    <div class="coupon-info">
+                        <span class="coupon-label">Apply Coupon</span>
+                        <span class="coupon-hint">Save more on your order</span>
+                    </div>
+                    <button class="coupon-arrow" id="apply-coupon-btn">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+            </section>
+            -->
+
+            <!-- Payment Method Section -->
+            <section class="payment-section" id="payment-section">
+                <div class="section-header">
+                    <i class="fas fa-money-bill-wave"></i>
+                    <h2>Payment Method</h2>
+                </div>
+
+                <div class="payment-options">
+                    <!-- Cash on Delivery Option (Only Option) -->
+                    <div class="payment-option selected" data-method="cod">
+                        <div class="payment-radio">
+                            <div class="radio-dot"></div>
+                        </div>
+                        <div class="payment-content">
+                            <div class="payment-icon cod">
+                                <i class="fas fa-money-bill-wave"></i>
+                            </div>
+                            <div class="payment-details">
+                                <span class="payment-name">Cash on Delivery</span>
+                                <span class="payment-desc">Pay when you receive your order</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Spacer for fixed checkout button -->
+            <div class="checkout-spacer"></div>
+        </main>
+
+        <!-- Sticky Checkout Footer -->
+        <footer class="checkout-footer" id="checkout-footer">
+            <div class="checkout-summary">
+                <div class="checkout-total">
+                    <span class="total-label">Total</span>
+                    <span class="total-amount" id="checkout-total">₹0.00</span>
+                </div>
+                <button class="btn-checkout" id="checkout-btn" disabled>
+                    <span class="btn-text">Proceed to Pay</span>
+                    <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Remove Item Confirmation Modal -->
+    <div class="modal-overlay" id="remove-modal">
+        <div class="modal-container">
+            <div class="modal-icon warning">
+                <i class="fas fa-trash-alt"></i>
+            </div>
+            <h3>Remove Item?</h3>
+            <p>Are you sure you want to remove this item from your cart?</p>
+            <div class="modal-actions">
+                <button class="btn-cancel" id="cancel-remove">Cancel</button>
+                <button class="btn-confirm" id="confirm-remove">Remove</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Clear Cart Confirmation Modal -->
+    <div class="modal-overlay" id="clear-modal">
+        <div class="modal-container">
+            <div class="modal-icon warning">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <h3>Clear Cart?</h3>
+            <p>Are you sure you want to remove all items from your cart?</p>
+            <div class="modal-actions">
+                <button class="btn-cancel" id="cancel-clear">Cancel</button>
+                <button class="btn-confirm" id="confirm-clear">Clear All</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Order Summary Modal -->
+    <div class="modal-overlay" id="order-summary-modal">
+        <div class="modal-container order-summary">
+            <div class="modal-header">
+                <h3>Order Summary</h3>
+                <button class="close-modal" id="close-summary">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="summary-items" id="summary-items">
+                    <!-- Items will be loaded here -->
+                </div>
+                <div class="summary-divider"></div>
+                <div class="summary-details">
+                    <div class="summary-row">
+                        <span>Item Total</span>
+                        <span id="summary-item-total">₹0.00</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Delivery Fee</span>
+                        <span id="summary-delivery">FREE</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Taxes</span>
+                        <span id="summary-tax">₹0.00</span>
+                    </div>
+                    <div class="summary-row total">
+                        <span>Grand Total</span>
+                        <span id="summary-grand-total">₹0.00</span>
+                    </div>
+                </div>
+                <div class="summary-payment">
+                    <span>Payment Method:</span>
+                    <span id="summary-payment-method">UPI</span>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-place-order" id="place-order-btn">
+                    <i class="fas fa-check-circle"></i>
+                    Place Order
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Coupon Modal -->
+    <div class="modal-overlay" id="coupon-modal">
+        <div class="modal-container coupon-modal">
+            <div class="modal-header">
+                <h3>Apply Coupon</h3>
+                <button class="close-modal" id="close-coupon">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="coupon-input-group">
+                    <input type="text" id="coupon-code" placeholder="Enter coupon code" maxlength="20">
+                    <button class="btn-apply-coupon" id="apply-coupon">Apply</button>
+                </div>
+                <div class="available-coupons">
+                    <h4>Available Coupons</h4>
+                    <div class="coupon-item" data-code="FIRST50">
+                        <div class="coupon-left">
+                            <span class="coupon-code-text">FIRST50</span>
+                            <span class="coupon-description">50% off on first order (max ₹100)</span>
+                        </div>
+                        <button class="btn-apply-small">Apply</button>
+                    </div>
+                    <div class="coupon-item" data-code="FRESH20">
+                        <div class="coupon-left">
+                            <span class="coupon-code-text">FRESH20</span>
+                            <span class="coupon-description">Flat ₹20 off on orders above ₹200</span>
+                        </div>
+                        <button class="btn-apply-small">Apply</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loading-overlay">
+        <div class="loading-spinner"></div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toast-container"></div>
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- Common Utilities -->
+    <script src="../js/common.js?v=5.1"></script>
+
+    <!-- Cart JS -->
+    <script src="../js/cart.js?v=8.1"></script>
+</body>
+</html>

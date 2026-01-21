@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(php:*)",
+      "Bash(C:xamppphpphp.exe \"c:\\\\Users\\\\admin\\\\Documents\\\\GitHub\\\\KPS-NURSERY\\\\backend\\\\migrate.php\")",
+      "Bash(where:*)",
+      "Bash(cmd /c \"C:\\\\xampp\\\\php\\\\php.exe\" \"c:\\\\Users\\\\admin\\\\Documents\\\\GitHub\\\\KPS-NURSERY\\\\backend\\\\migrate.php\")",
+      "Bash(powershell -Command \"& ''C:\\\\xampp\\\\php\\\\php.exe'' ''c:\\\\Users\\\\admin\\\\Documents\\\\GitHub\\\\KPS-NURSERY\\\\backend\\\\migrate.php''\")",
+      "Bash(powershell -Command \"Start-Process ''C:\\\\xampp\\\\xampp-control.exe''\")",
+      "Bash(powershell -Command \"if \\(Test-Path ''C:\\\\xampp\\\\htdocs\\\\kps-nursery''\\) { Remove-Item ''C:\\\\xampp\\\\htdocs\\\\kps-nursery'' -Recurse -Force }; New-Item -ItemType Junction -Path ''C:\\\\xampp\\\\htdocs\\\\kps-nursery'' -Target ''C:\\\\Users\\\\admin\\\\Documents\\\\GitHub\\\\KPS-NURSERY'' -Force\")",
+      "Bash(powershell -Command \"Start-Process ''http://localhost/kps-nursery/frontend/pages/home.html''\")",
+      "Bash(C:/xampp/mysql/bin/mysql.exe -u root -e \"source c:/Users/admin/Documents/GitHub/KPS-NURSERY/backend/config/local_setup.sql\")",
+      "Bash(start \"\" \"http://localhost/kps-nursery/frontend/pages/home.html\")"
+    ]
+  }
+}

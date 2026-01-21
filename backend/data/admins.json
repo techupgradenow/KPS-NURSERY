@@ -1,0 +1,14 @@
+[
+    {
+        "id": 1,
+        "username": "admin",
+        "email": "admin@skbakers.com",
+        "password": "$2y$10$7gXIWMWezZsp9WZ0bCgcb.BkQgfkekQeU0lvCdcs4tBEf5kug39IG",
+        "name": "Super Admin",
+        "role": "admin",
+        "avatar": null,
+        "is_active": 1,
+        "last_login": "2026-01-09 20:29:21",
+        "created_at": "2026-01-09 19:54:37"
+    }
+]

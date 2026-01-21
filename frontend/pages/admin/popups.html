@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- SEO Meta Tags - Admin Panel (noindex) -->
+    <title>Offer Popups - SK Bakers Admin Panel</title>
+    <meta name="description" content="SK Bakers Admin - Manage offer popups and promotions.">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="googlebot" content="noindex, nofollow">
+    <meta name="author" content="SK Bakers Kovilpatti">
+
+    <!-- Favicon & App Icons -->
+    <link rel="icon" type="image/webp" href="../../logo.webp">
+    <link rel="icon" type="image/png" href="../../assets/logo.png">
+    <link rel="shortcut icon" type="image/png" href="../../assets/logo.png">
+    <link rel="apple-touch-icon" href="../../assets/logo.png">
+
+    <!-- Theme Color -->
+    <meta name="theme-color" content="#B03359">
+    <meta name="msapplication-TileColor" content="#B03359">
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/admin.css?v=5.0">
+</head>
+<body>
+    <div class="admin-layout">
+        <!-- Mobile Sidebar Overlay -->
+        <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <img src="../../logo.webp" alt="SK Bakers" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 40 40%22><rect fill=%22%23B03359%22 width=%2240%22 height=%2240%22 rx=%228%22/><text x=%2250%%22 y=%2255%%22 fill=%22white%22 font-size=%2214%22 font-weight=%22bold%22 text-anchor=%22middle%22>SK</text></svg>'">
+                <h2>SK Bakers</h2>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="index.html" class="nav-item">
+                    <i class="fas fa-th-large"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="orders.html" class="nav-item">
+                    <i class="fas fa-shopping-bag"></i>
+                    <span>Orders</span>
+                </a>
+                <a href="products.html" class="nav-item">
+                    <i class="fas fa-box"></i>
+                    <span>Products</span>
+                </a>
+                <a href="menu.html" class="nav-item">
+                    <i class="fas fa-utensils"></i>
+                    <span>Menu Card</span>
+                </a>
+                <a href="categories.html" class="nav-item">
+                    <i class="fas fa-folder"></i>
+                    <span>Categories</span>
+                </a>
+                <a href="customers.html" class="nav-item">
+                    <i class="fas fa-users"></i>
+                    <span>Customers</span>
+                </a>
+                <div class="nav-divider"></div>
+                <a href="banners.html" class="nav-item">
+                    <i class="fas fa-images"></i>
+                    <span>Banners</span>
+                </a>
+                <a href="popups.html" class="nav-item active">
+                    <i class="fas fa-bullhorn"></i>
+                    <span>Offer Popups</span>
+                </a>
+                <div class="nav-divider"></div>
+                <a href="#" class="nav-item" onclick="AdminAPI.logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="admin-header">
+                <div class="header-left">
+                    <button class="toggle-sidebar">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <h1 class="page-title">Offer Popups</h1>
+                </div>
+                <div class="header-right">
+                    <div class="admin-profile">
+                        <div class="admin-avatar">A</div>
+                        <div class="admin-info">
+                            <div class="admin-name">Admin</div>
+                            <div class="admin-role">Administrator</div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <div class="content-area">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Promotional Popups</h3>
+                        <button class="btn btn-primary" onclick="openAddModal()">
+                            <i class="fas fa-plus"></i> Add Popup
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <p style="color: var(--gray); margin-bottom: 20px;">
+                            <i class="fas fa-info-circle"></i> Only one popup can be active at a time. Upload an image that will be displayed as a popup on the home page.
+                        </p>
+                        <div class="table-container">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Image</th>
+                                        <th>Display Rule</th>
+                                        <th>Date Range</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="popupsTable">
+                                    <tr>
+                                        <td colspan="5" class="loading">
+                                            <div class="loading-spinner"></div>
+                                            Loading...
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Add/Edit Popup Modal -->
+    <div class="modal-overlay" id="popupModal">
+        <div class="modal" style="max-width: 500px;">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modalTitle">Add Popup</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="popupForm">
+                    <input type="hidden" id="popupId">
+                    <input type="hidden" id="popupTitle" value="Offer Popup">
+                    <div class="form-group">
+                        <label>Popup Image *</label>
+                        <p style="color: var(--gray); font-size: 12px; margin-bottom: 10px;">
+                            Upload the image that will be displayed as popup. This is the only content shown to users.
+                        </p>
+                        <div class="image-upload-container" id="popupUploadContainer">
+                            <div class="image-preview" id="popupImagePreview">
+                                <img id="popupPreviewImg" alt="Preview" style="display: none;">
+                                <div class="upload-placeholder" id="popupPlaceholder" style="display: block;">
+                                    <i class="fas fa-cloud-upload-alt"></i>
+                                    <p>Click to upload or drag and drop</p>
+                                    <span>JPG, PNG, GIF, WEBP (Max 5MB)</span>
+                                </div>
+                            </div>
+                            <input type="file" id="popupFileInput" accept="image/jpeg,image/png,image/gif,image/webp" style="display: none;">
+                            <input type="hidden" id="popupImageUrl">
+                            <div class="upload-actions">
+                                <button type="button" class="btn btn-outline btn-sm" onclick="document.getElementById('popupFileInput').click()">
+                                    <i class="fas fa-upload"></i> Choose File
+                                </button>
+                                <button type="button" class="btn btn-outline btn-sm" id="popupClearBtn" style="display: none;">
+                                    <i class="fas fa-times"></i> Remove
+                                </button>
+                            </div>
+                            <div class="upload-progress" id="popupProgress" style="display: none;">
+                                <div class="progress-bar"><div class="progress-fill" id="popupProgressFill"></div></div>
+                                <span id="popupProgressText">Uploading...</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="popupDisplayRule">Display Rule</label>
+                        <select id="popupDisplayRule" class="form-control">
+                            <option value="first_load">First Load Only</option>
+                            <option value="every_visit">Every Visit</option>
+                            <option value="once_per_day">Once Per Day</option>
+                            <option value="once_per_session" selected>Once Per Session</option>
+                        </select>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="popupStartDate">Start Date</label>
+                            <input type="date" id="popupStartDate" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label for="popupEndDate">End Date</label>
+                            <input type="date" id="popupEndDate" class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="popupActive" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                        <span style="margin-left: 10px;">Active</span>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline" onclick="AdminAPI.closeModal('popupModal')">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="savePopup()">Save Popup</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/admin.js"></script>
+    <script>
+        const displayRuleLabels = {
+            'first_load': 'First Load Only',
+            'every_visit': 'Every Visit',
+            'once_per_day': 'Once Per Day',
+            'once_per_session': 'Once Per Session'
+        };
+
+        let popupUploader = null;
+
+        document.addEventListener('DOMContentLoaded', async function() {
+            await loadPopups();
+            // Initialize centralized image uploader
+            popupUploader = AdminAPI.initImageUploader(AdminAPI.getImageUploaderConfig('popup'));
+            // Add clear button handler
+            document.getElementById('popupClearBtn').addEventListener('click', () => popupUploader.clearPreview());
+        });
+
+        async function loadPopups() {
+            const tbody = document.getElementById('popupsTable');
+            tbody.innerHTML = '<tr><td colspan="5" class="loading"><div class="loading-spinner"></div>Loading...</td></tr>';
+
+            try {
+                const response = await AdminAPI.call('/popups', 'GET');
+                if (response.success) {
+                    renderPopups(response.data);
+                } else {
+                    tbody.innerHTML = '<tr><td colspan="5" class="empty-state">Failed to load popups</td></tr>';
+                }
+            } catch (error) {
+                console.error('Failed to load popups:', error);
+                tbody.innerHTML = '<tr><td colspan="5" class="empty-state">Failed to load popups</td></tr>';
+            }
+        }
+
+        function renderPopups(popups) {
+            const tbody = document.getElementById('popupsTable');
+
+            if (popups.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="empty-state">
+                            <i class="fas fa-bullhorn"></i>
+                            <h3>No popups yet</h3>
+                            <p>Create your first offer popup to engage customers</p>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = popups.map(popup => {
+                const dateRange = (popup.start_date || popup.end_date)
+                    ? `${popup.start_date || 'Any'} - ${popup.end_date || 'Any'}`
+                    : 'Always';
+
+                return `
+                    <tr>
+                        <td>
+                            ${popup.image ? `<img src="${AdminAPI.getAdminImagePath(popup.image)}" alt="" style="width: 100px; height: 70px; object-fit: cover; border-radius: 8px; border: 2px solid var(--gray-lighter);" onerror="this.src='../../assets/logo.png'">` : '<span style="color: var(--gray);">No image</span>'}
+                        </td>
+                        <td>${displayRuleLabels[popup.display_rule] || popup.display_rule}</td>
+                        <td style="font-size: 13px; color: var(--gray);">${dateRange}</td>
+                        <td>${AdminAPI.getStatusBadge(popup.is_active ? 'active' : 'inactive')}</td>
+                        <td>
+                            <div class="action-btns">
+                                <button class="action-btn view" onclick="previewPopup(${popup.id})" title="Preview">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="action-btn edit" onclick="editPopup(${popup.id})" title="Edit">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="action-btn delete" onclick="deletePopup(${popup.id})" title="Delete">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function openAddModal() {
+            document.getElementById('modalTitle').textContent = 'Add Popup';
+            document.getElementById('popupForm').reset();
+            document.getElementById('popupId').value = '';
+            document.getElementById('popupActive').checked = true;
+            // Clear image preview
+            if (popupUploader) {
+                popupUploader.clearPreview();
+            } else {
+                const img = document.getElementById('popupPreviewImg');
+                const placeholder = document.getElementById('popupPlaceholder');
+                const clearBtn = document.getElementById('popupClearBtn');
+                if (img) { img.removeAttribute('src'); img.style.display = 'none'; }
+                if (placeholder) placeholder.style.display = 'block';
+                if (clearBtn) clearBtn.style.display = 'none';
+            }
+            document.getElementById('popupImageUrl').value = '';
+            AdminAPI.openModal('popupModal');
+        }
+
+        async function editPopup(id) {
+            try {
+                const response = await AdminAPI.call(`/popups/${id}`, 'GET');
+                if (response.success) {
+                    const popup = response.data;
+                    document.getElementById('modalTitle').textContent = 'Edit Popup';
+                    document.getElementById('popupId').value = popup.id;
+                    if (popup.image && popupUploader) {
+                        popupUploader.setPreview(AdminAPI.getAdminImagePath(popup.image));
+                    } else if (popupUploader) {
+                        popupUploader.clearPreview();
+                    }
+                    document.getElementById('popupImageUrl').value = popup.image || '';
+                    document.getElementById('popupDisplayRule').value = popup.display_rule || 'once_per_session';
+                    document.getElementById('popupStartDate').value = popup.start_date || '';
+                    document.getElementById('popupEndDate').value = popup.end_date || '';
+                    document.getElementById('popupActive').checked = popup.is_active == 1;
+                    AdminAPI.openModal('popupModal');
+                }
+            } catch (error) {
+                AdminAPI.showToast('Failed to load popup', 'error');
+            }
+        }
+
+        async function savePopup() {
+            const id = document.getElementById('popupId').value;
+            const imageUrl = document.getElementById('popupImageUrl').value;
+
+            if (!imageUrl) {
+                AdminAPI.showToast('Please upload a popup image', 'error');
+                return;
+            }
+
+            const data = {
+                title: 'Offer Popup',
+                description: '',
+                image: imageUrl,
+                coupon_code: '',
+                display_rule: document.getElementById('popupDisplayRule').value,
+                cta_text: '',
+                cta_link: '',
+                start_date: document.getElementById('popupStartDate').value,
+                end_date: document.getElementById('popupEndDate').value,
+                is_active: document.getElementById('popupActive').checked
+            };
+
+            try {
+                let response;
+                if (id) {
+                    data.id = id;
+                    response = await AdminAPI.call('/popups', 'PUT', data);
+                } else {
+                    response = await AdminAPI.call('/popups', 'POST', data);
+                }
+
+                if (response.success) {
+                    AdminAPI.showToast(response.message, 'success');
+                    AdminAPI.closeModal('popupModal');
+                    loadPopups();
+                } else {
+                    AdminAPI.showToast(response.message || 'Failed to save popup', 'error');
+                }
+            } catch (error) {
+                AdminAPI.showToast('Failed to save popup', 'error');
+            }
+        }
+
+        async function deletePopup(id) {
+            if (!await AdminAPI.confirmAction('Are you sure you want to delete this popup?')) {
+                return;
+            }
+
+            try {
+                const response = await AdminAPI.call(`/popups/${id}`, 'DELETE');
+                if (response.success) {
+                    AdminAPI.showToast('Popup deleted', 'success');
+                    loadPopups();
+                } else {
+                    AdminAPI.showToast(response.message || 'Failed to delete popup', 'error');
+                }
+            } catch (error) {
+                AdminAPI.showToast('Failed to delete popup', 'error');
+            }
+        }
+
+        async function previewPopup(id) {
+            try {
+                const response = await AdminAPI.call(`/popups/${id}`, 'GET');
+                if (response.success) {
+                    const popup = response.data;
+
+                    if (!popup.image) {
+                        AdminAPI.showToast('No image to preview', 'error');
+                        return;
+                    }
+
+                    // Create simple image-only preview popup
+                    const preview = document.createElement('div');
+                    preview.className = 'modal-overlay active';
+                    preview.id = 'previewOverlay';
+                    preview.style.cssText = 'background: rgba(0,0,0,0.7); backdrop-filter: blur(8px);';
+                    preview.innerHTML = `
+                        <div style="
+                            position: relative;
+                            max-width: 400px;
+                            width: 90%;
+                            border-radius: 20px;
+                            overflow: hidden;
+                            box-shadow: 0 25px 80px rgba(0,0,0,0.3), 0 10px 30px rgba(0,0,0,0.2);
+                            animation: popupSlideIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+                        ">
+                            <style>
+                                @keyframes popupSlideIn {
+                                    from { opacity: 0; transform: scale(0.8) translateY(30px); }
+                                    to { opacity: 1; transform: scale(1) translateY(0); }
+                                }
+                            </style>
+
+                            <!-- Close Button -->
+                            <button onclick="document.getElementById('previewOverlay').remove()" style="
+                                position: absolute;
+                                top: 10px;
+                                right: 10px;
+                                width: 32px;
+                                height: 32px;
+                                border-radius: 50%;
+                                border: none;
+                                background: rgba(0,0,0,0.5);
+                                color: #fff;
+                                font-size: 16px;
+                                cursor: pointer;
+                                z-index: 10;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                                transition: all 0.3s ease;
+                            " onmouseover="this.style.background='rgba(0,0,0,0.7)'; this.style.transform='scale(1.1)';" onmouseout="this.style.background='rgba(0,0,0,0.5)'; this.style.transform='scale(1)';">
+                                <i class="fas fa-times"></i>
+                            </button>
+
+                            <!-- Image Only -->
+                            <img src="${AdminAPI.getAdminImagePath(popup.image)}" alt="Offer" style="
+                                width: 100%;
+                                height: auto;
+                                display: block;
+                            " onerror="this.parentElement.innerHTML='<div style=\\'padding: 40px; text-align: center; color: #999;\\'>Image not found</div>'">
+                        </div>
+                    `;
+                    document.body.appendChild(preview);
+                    preview.addEventListener('click', (e) => {
+                        if (e.target === preview) preview.remove();
+                    });
+                }
+            } catch (error) {
+                AdminAPI.showToast('Failed to load popup preview', 'error');
+            }
+        }
+    </script>
+</body>
+</html>

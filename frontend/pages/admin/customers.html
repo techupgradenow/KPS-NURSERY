@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- SEO Meta Tags - Admin Panel (noindex) -->
+    <title>Customers Management - SK Bakers Admin Panel</title>
+    <meta name="description" content="SK Bakers Admin - Manage customer accounts and data.">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="googlebot" content="noindex, nofollow">
+    <meta name="author" content="SK Bakers Kovilpatti">
+
+    <!-- Favicon & App Icons -->
+    <link rel="icon" type="image/webp" href="../../logo.webp">
+    <link rel="icon" type="image/png" href="../../assets/logo.png">
+    <link rel="shortcut icon" type="image/png" href="../../assets/logo.png">
+    <link rel="apple-touch-icon" href="../../assets/logo.png">
+
+    <!-- Theme Color -->
+    <meta name="theme-color" content="#B03359">
+    <meta name="msapplication-TileColor" content="#B03359">
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/admin.css?v=5.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+</head>
+<body>
+    <div class="admin-layout">
+        <!-- Mobile Sidebar Overlay -->
+        <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <img src="../../assets/logo.png" alt="Logo" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 40 40%22><rect fill=%22%23e53935%22 width=%2240%22 height=%2240%22 rx=%228%22/><text x=%2250%%22 y=%2255%%22 fill=%22white%22 font-size=%2220%22 text-anchor=%22middle%22>FC</text></svg>'">
+                <h2>SK Bakers</h2>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="index.html" class="nav-item">
+                    <i class="fas fa-th-large"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="orders.html" class="nav-item">
+                    <i class="fas fa-shopping-bag"></i>
+                    <span>Orders</span>
+                </a>
+                <a href="products.html" class="nav-item">
+                    <i class="fas fa-box"></i>
+                    <span>Products</span>
+                </a>
+                <a href="menu.html" class="nav-item">
+                    <i class="fas fa-utensils"></i>
+                    <span>Menu Card</span>
+                </a>
+                <a href="categories.html" class="nav-item">
+                    <i class="fas fa-folder"></i>
+                    <span>Categories</span>
+                </a>
+                <a href="customers.html" class="nav-item active">
+                    <i class="fas fa-users"></i>
+                    <span>Customers</span>
+                </a>
+                <div class="nav-divider"></div>
+                <a href="banners.html" class="nav-item">
+                    <i class="fas fa-images"></i>
+                    <span>Banners</span>
+                </a>
+                <a href="popups.html" class="nav-item">
+                    <i class="fas fa-bullhorn"></i>
+                    <span>Offer Popups</span>
+                </a>
+                <div class="nav-divider"></div>
+                <a href="#" class="nav-item" onclick="AdminAPI.logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="admin-header">
+                <div class="header-left">
+                    <button class="toggle-sidebar">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <h1 class="page-title">Customers</h1>
+                </div>
+                <div class="header-right">
+                    <div class="admin-profile">
+                        <div class="admin-avatar">A</div>
+                        <div class="admin-info">
+                            <div class="admin-name">Admin</div>
+                            <div class="admin-role">Administrator</div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <div class="content-area">
+                <!-- Filters -->
+                <div class="filters-bar">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="searchInput" placeholder="Search customers..." onkeyup="handleSearch(event)">
+                    </div>
+                    <select class="form-control filter-select" id="statusFilter" onchange="loadCustomers()">
+                        <option value="">All Status</option>
+                        <option value="active">Active</option>
+                        <option value="inactive">Inactive</option>
+                    </select>
+                </div>
+
+                <!-- Customers Table -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Customer List</h3>
+                        <span id="totalCustomers" style="color: var(--gray);">0 customers</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-container">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Customer</th>
+                                        <th>Mobile</th>
+                                        <th>Address</th>
+                                        <th>Orders</th>
+                                        <th>Total Spent</th>
+                                        <th>Joined</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="customersTable">
+                                    <tr>
+                                        <td colspan="8" class="loading">
+                                            <div class="loading-spinner"></div>
+                                            Loading...
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="pagination" id="pagination"></div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- View Customer Modal -->
+    <div class="modal-overlay" id="customerModal">
+        <div class="modal" style="max-width: 600px;">
+            <div class="modal-header">
+                <h3 class="modal-title">Customer Details</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body" id="customerDetails">
+                <div class="loading">
+                    <div class="loading-spinner"></div>
+                    Loading...
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline" onclick="AdminAPI.closeModal('customerModal')">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/admin.js"></script>
+    <script>
+        let currentPage = 1;
+
+        document.addEventListener('DOMContentLoaded', async function() {
+            await loadCustomers();
+        });
+
+        async function loadCustomers() {
+            const tbody = document.getElementById('customersTable');
+            tbody.innerHTML = '<tr><td colspan="8" class="loading"><div class="loading-spinner"></div>Loading...</td></tr>';
+
+            try {
+                const params = {
+                    page: currentPage,
+                    limit: 20
+                };
+
+                const search = document.getElementById('searchInput').value;
+                const status = document.getElementById('statusFilter').value;
+
+                if (search) params.search = search;
+                if (status) params.status = status;
+
+                const queryString = new URLSearchParams(params).toString();
+                const response = await AdminAPI.call(`/customers?${queryString}`, 'GET');
+
+                if (response.success) {
+                    document.getElementById('totalCustomers').textContent = `${response.data.pagination.total} customers`;
+                    renderCustomers(response.data.data);
+                    renderPagination(response.data.pagination);
+                } else {
+                    tbody.innerHTML = '<tr><td colspan="8" class="empty-state">Failed to load customers</td></tr>';
+                }
+            } catch (error) {
+                console.error('Failed to load customers:', error);
+                tbody.innerHTML = '<tr><td colspan="8" class="empty-state">Failed to load customers</td></tr>';
+            }
+        }
+
+        function renderCustomers(customers) {
+            const tbody = document.getElementById('customersTable');
+
+            if (customers.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="8" class="empty-state">
+                            <i class="fas fa-users"></i>
+                            <h3>No customers found</h3>
+                            <p>Customers will appear here when they register</p>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = customers.map(customer => {
+                const isActive = customer.is_active === 1 || customer.is_active === '1' || customer.status === 'active';
+                const customerAddress = customer.customer_address || customer.address || '-';
+                const truncatedAddress = customerAddress.length > 40 ? customerAddress.substring(0, 40) + '...' : customerAddress;
+                return `
+                <tr>
+                    <td>
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <div style="width: 40px; height: 40px; background: var(--primary); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600;">
+                                ${(customer.name || 'G')[0].toUpperCase()}
+                            </div>
+                            <div>
+                                <strong>${customer.name || 'Guest'}</strong>
+                                ${customer.is_guest ? '<br><small style="color: var(--gray);">Guest User</small>' : ''}
+                            </div>
+                        </div>
+                    </td>
+                    <td>${customer.mobile || '-'}</td>
+                    <td title="${customerAddress}">${truncatedAddress}</td>
+                    <td>${customer.order_count || 0}</td>
+                    <td>${AdminAPI.formatCurrency(customer.total_spent || 0)}</td>
+                    <td>${AdminAPI.formatDate(customer.created_at)}</td>
+                    <td>${AdminAPI.getStatusBadge(isActive ? 'active' : 'inactive')}</td>
+                    <td>
+                        <div class="action-btns">
+                            <button class="action-btn edit" onclick="viewCustomer(${customer.id})" title="View Details">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="action-btn ${isActive ? 'delete' : 'success'}" onclick="toggleCustomerStatus(${customer.id}, ${isActive})" title="${isActive ? 'Deactivate' : 'Activate'}">
+                                <i class="fas fa-${isActive ? 'ban' : 'check'}"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `}).join('');
+        }
+
+        function renderPagination(pagination) {
+            const container = document.getElementById('pagination');
+            const { current_page, total_pages } = pagination;
+
+            if (total_pages <= 1) {
+                container.innerHTML = '';
+                return;
+            }
+
+            let html = `
+                <button ${current_page === 1 ? 'disabled' : ''} onclick="goToPage(${current_page - 1})">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+            `;
+
+            for (let i = 1; i <= total_pages; i++) {
+                if (i === 1 || i === total_pages || (i >= current_page - 2 && i <= current_page + 2)) {
+                    html += `<button class="${i === current_page ? 'active' : ''}" onclick="goToPage(${i})">${i}</button>`;
+                } else if (i === current_page - 3 || i === current_page + 3) {
+                    html += `<button disabled>...</button>`;
+                }
+            }
+
+            html += `
+                <button ${current_page === total_pages ? 'disabled' : ''} onclick="goToPage(${current_page + 1})">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            `;
+
+            container.innerHTML = html;
+        }
+
+        function goToPage(page) {
+            currentPage = page;
+            loadCustomers();
+        }
+
+        const handleSearch = AdminAPI.debounce(function(event) {
+            currentPage = 1;
+            loadCustomers();
+        }, 300);
+
+        async function viewCustomer(id) {
+            const container = document.getElementById('customerDetails');
+            container.innerHTML = '<div class="loading"><div class="loading-spinner"></div>Loading...</div>';
+            AdminAPI.openModal('customerModal');
+
+            try {
+                const response = await AdminAPI.call(`/customers/${id}`, 'GET');
+                if (response.success) {
+                    const customer = response.data;
+                    container.innerHTML = `
+                        <div style="display: grid; gap: 20px;">
+                            <div style="display: flex; align-items: center; gap: 15px; padding-bottom: 15px; border-bottom: 1px solid var(--gray-light);">
+                                <div style="width: 60px; height: 60px; background: var(--primary); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: 600;">
+                                    ${(customer.name || 'G')[0].toUpperCase()}
+                                </div>
+                                <div>
+                                    <h3 style="margin: 0;">${customer.name || 'Guest User'}</h3>
+                                    <p style="margin: 5px 0 0; color: var(--gray);">Customer since ${AdminAPI.formatDate(customer.created_at)}</p>
+                                </div>
+                            </div>
+
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                                <div>
+                                    <label style="color: var(--gray); font-size: 12px;">Mobile</label>
+                                    <p style="margin: 5px 0 0; font-weight: 500;">${customer.mobile || '-'}</p>
+                                </div>
+                                <div>
+                                    <label style="color: var(--gray); font-size: 12px;">Email</label>
+                                    <p style="margin: 5px 0 0; font-weight: 500;">${customer.email || '-'}</p>
+                                </div>
+                                <div>
+                                    <label style="color: var(--gray); font-size: 12px;">Total Orders</label>
+                                    <p style="margin: 5px 0 0; font-weight: 500;">${customer.order_count || 0}</p>
+                                </div>
+                                <div>
+                                    <label style="color: var(--gray); font-size: 12px;">Total Spent</label>
+                                    <p style="margin: 5px 0 0; font-weight: 500; color: var(--success);">${AdminAPI.formatCurrency(customer.total_spent || 0)}</p>
+                                </div>
+                            </div>
+
+                            ${customer.addresses && customer.addresses.length > 0 ? `
+                                <div style="padding-top: 15px; border-top: 1px solid var(--gray-light);">
+                                    <h4 style="margin: 0 0 10px;">Saved Addresses</h4>
+                                    ${customer.addresses.map(addr => `
+                                        <div style="background: var(--light); padding: 10px; border-radius: 8px; margin-bottom: 10px;">
+                                            <strong>${addr.name || customer.name}</strong> - ${addr.mobile || customer.mobile}<br>
+                                            <span style="color: var(--gray);">${addr.street}, ${addr.landmark ? addr.landmark + ', ' : ''}${addr.city}, ${addr.state} - ${addr.pincode}</span>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            ` : ''}
+
+                            ${customer.recent_orders && customer.recent_orders.length > 0 ? `
+                                <div style="padding-top: 15px; border-top: 1px solid var(--gray-light);">
+                                    <h4 style="margin: 0 0 10px;">Recent Orders</h4>
+                                    ${customer.recent_orders.map(order => `
+                                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; background: var(--light); border-radius: 8px; margin-bottom: 10px;">
+                                            <div>
+                                                <a href="orders.html?id=${order.id}" style="color: var(--primary); font-weight: 500;">${order.order_id}</a>
+                                                <br><small style="color: var(--gray);">${AdminAPI.formatDate(order.created_at)}</small>
+                                            </div>
+                                            <div style="text-align: right;">
+                                                ${AdminAPI.getStatusBadge(order.status)}
+                                                <br><strong>${AdminAPI.formatCurrency(order.total)}</strong>
+                                            </div>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            ` : ''}
+                        </div>
+                    `;
+                } else {
+                    container.innerHTML = '<p>Failed to load customer details</p>';
+                }
+            } catch (error) {
+                container.innerHTML = '<p>Failed to load customer details</p>';
+            }
+        }
+
+        async function toggleCustomerStatus(id, currentStatus) {
+            const action = currentStatus ? 'deactivate' : 'activate';
+            if (!await AdminAPI.confirmAction(`Are you sure you want to ${action} this customer?`)) {
+                return;
+            }
+
+            try {
+                const response = await AdminAPI.call('/customers', 'PUT', {
+                    id: id,
+                    is_active: !currentStatus
+                });
+
+                if (response.success) {
+                    AdminAPI.showToast(`Customer ${action}d successfully`, 'success');
+                    loadCustomers();
+                } else {
+                    AdminAPI.showToast(response.message || `Failed to ${action} customer`, 'error');
+                }
+            } catch (error) {
+                AdminAPI.showToast(`Failed to ${action} customer`, 'error');
+            }
+        }
+    </script>
+</body>
+</html>

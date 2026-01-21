@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Checkout - KPS Nursery</title>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Checkout Page CSS Only (self-contained) -->
+    <link rel="stylesheet" href="../css/checkout.css">
+</head>
+<body>
+    <div class="app-container">
+        <div id="main-app" class="screen active">
+            <!-- Header -->
+            <header class="checkout-header">
+                <a href="cart.html" class="checkout-back-btn">
+                    <i class="fas fa-arrow-left"></i>
+                </a>
+                <h1 class="checkout-header-title">Checkout</h1>
+                <div class="checkout-header-steps">
+                    <div class="header-step completed">
+                        <i class="fas fa-check"></i>
+                    </div>
+                    <div class="header-step active">2</div>
+                    <div class="header-step">3</div>
+                </div>
+            </header>
+
+            <!-- Main Content -->
+            <main class="checkout-main">
+                <!-- Checkout Screen -->
+                <div id="checkout-screen" class="screen active">
+                    <!-- Delivery Address Section -->
+                    <section class="checkout-section">
+                        <div class="checkout-section-header">
+                            <h3 class="checkout-section-title">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span>Delivery Address</span>
+                            </h3>
+                            <button type="button" class="btn-add-new" id="add-address-btn" onclick="openAddressModal()">
+                                <i class="fas fa-plus"></i>
+                                <span>Add New</span>
+                            </button>
+                        </div>
+                        <div class="checkout-section-content">
+                            <div id="addresses-container" class="addresses-list">
+                                <!-- Addresses will be loaded here -->
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Delivery Options Section -->
+                    <section class="checkout-section">
+                        <div class="checkout-section-header">
+                            <h3 class="checkout-section-title">
+                                <i class="fas fa-shipping-fast"></i>
+                                <span>Delivery Options</span>
+                            </h3>
+                        </div>
+                        <div class="checkout-section-content">
+                            <div class="delivery-options-list">
+                                <div class="delivery-option-card selected" data-type="standard">
+                                    <div class="delivery-option-radio">
+                                        <div class="delivery-option-radio-dot"></div>
+                                    </div>
+                                    <div class="delivery-option-icon">
+                                        <i class="fas fa-truck"></i>
+                                    </div>
+                                    <div class="delivery-option-info">
+                                        <div class="delivery-option-name">Standard Delivery</div>
+                                        <div class="delivery-option-time">
+                                            <i class="fas fa-clock"></i>
+                                            <span>Delivery in 60-90 mins</span>
+                                        </div>
+                                    </div>
+                                    <div class="delivery-option-price free">FREE</div>
+                                </div>
+                                <div class="delivery-option-card" data-type="express">
+                                    <div class="delivery-option-radio">
+                                        <div class="delivery-option-radio-dot"></div>
+                                    </div>
+                                    <div class="delivery-option-icon">
+                                        <i class="fas fa-bolt"></i>
+                                    </div>
+                                    <div class="delivery-option-info">
+                                        <div class="delivery-option-name">
+                                            Express Delivery
+                                            <span class="badge-fast"><i class="fas fa-bolt"></i> FAST</span>
+                                        </div>
+                                        <div class="delivery-option-time">
+                                            <i class="fas fa-clock"></i>
+                                            <span>Delivery in 30-45 mins</span>
+                                        </div>
+                                    </div>
+                                    <div class="delivery-option-price">₹60</div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Payment Methods Section -->
+                    <section class="checkout-section">
+                        <div class="checkout-section-header">
+                            <h3 class="checkout-section-title">
+                                <i class="fas fa-credit-card"></i>
+                                <span>Payment Method</span>
+                            </h3>
+                        </div>
+                        <div class="checkout-section-content">
+                            <div class="payment-methods-grid">
+                                <div class="payment-method-card" data-method="upi">
+                                    <div class="payment-method-radio">
+                                        <div class="payment-method-radio-dot"></div>
+                                    </div>
+                                    <div class="payment-method-icon upi">
+                                        <i class="fas fa-mobile-alt"></i>
+                                    </div>
+                                    <div class="payment-method-label">UPI / QR</div>
+                                    <div class="payment-method-desc">GPay, PhonePe, Paytm</div>
+                                </div>
+                                <div class="payment-method-card" data-method="card">
+                                    <div class="payment-method-radio">
+                                        <div class="payment-method-radio-dot"></div>
+                                    </div>
+                                    <div class="payment-method-icon card">
+                                        <i class="fas fa-credit-card"></i>
+                                    </div>
+                                    <div class="payment-method-label">Card</div>
+                                    <div class="payment-method-desc">Credit/Debit Card</div>
+                                </div>
+                                <div class="payment-method-card" data-method="netbanking">
+                                    <div class="payment-method-radio">
+                                        <div class="payment-method-radio-dot"></div>
+                                    </div>
+                                    <div class="payment-method-icon netbanking">
+                                        <i class="fas fa-university"></i>
+                                    </div>
+                                    <div class="payment-method-label">Net Banking</div>
+                                    <div class="payment-method-desc">All Banks</div>
+                                </div>
+                                <div class="payment-method-card selected" data-method="cod">
+                                    <div class="payment-method-radio">
+                                        <div class="payment-method-radio-dot"></div>
+                                    </div>
+                                    <div class="payment-method-icon cod">
+                                        <i class="fas fa-money-bill-wave"></i>
+                                    </div>
+                                    <div class="payment-method-label">Cash on Delivery</div>
+                                    <div class="payment-method-desc">Pay when delivered</div>
+                                </div>
+                            </div>
+                            <div class="secure-badge">
+                                <i class="fas fa-shield-alt"></i>
+                                <span>100% Secure Payments</span>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Order Summary Section -->
+                    <section class="checkout-section">
+                        <div class="checkout-section-header">
+                            <h3 class="checkout-section-title">
+                                <i class="fas fa-receipt"></i>
+                                <span>Order Summary</span>
+                            </h3>
+                        </div>
+                        <div class="checkout-section-content">
+                            <div id="order-summary-container" class="order-summary-container">
+                                <!-- Order summary will be loaded here -->
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </main>
+
+            <!-- Fixed Checkout Footer -->
+            <footer class="checkout-footer">
+                <div class="checkout-footer-content">
+                    <div class="checkout-footer-left">
+                        <span class="checkout-footer-label">Total Amount</span>
+                        <span class="checkout-footer-total">₹<span id="checkout-total">0.00</span></span>
+                        <span class="checkout-footer-savings" id="footer-savings" style="display: none;">
+                            <i class="fas fa-tag"></i>
+                            <span>You save ₹<span id="savings-amount">0</span></span>
+                        </span>
+                    </div>
+                </div>
+                <button class="btn-place-order" id="place-order-btn">
+                    <i class="fas fa-check-circle"></i>
+                    <span>Place Order</span>
+                </button>
+            </footer>
+        </div>
+    </div>
+
+    <!-- Add Address Modal -->
+    <div class="modal" id="address-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-map-marker-alt" style="color: var(--primary); margin-right: 10px;"></i>Add Delivery Address</h3>
+                <button class="close-modal" id="close-address-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="address-form">
+                    <div class="form-group">
+                        <label><i class="fas fa-user" style="margin-right: 6px; color: var(--gray-500);"></i>Full Name *</label>
+                        <input type="text" name="name" class="form-control" placeholder="Enter your full name" required>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-phone" style="margin-right: 6px; color: var(--gray-500);"></i>Mobile Number *</label>
+                        <input type="tel" name="mobile" class="form-control" placeholder="10-digit mobile number" pattern="[0-9]{10}" required>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-home" style="margin-right: 6px; color: var(--gray-500);"></i>Street Address *</label>
+                        <textarea name="address" class="form-control" rows="2" placeholder="House No., Building Name, Street" required></textarea>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>City *</label>
+                            <input type="text" name="city" class="form-control" placeholder="City" required>
+                        </div>
+                        <div class="form-group">
+                            <label>State *</label>
+                            <input type="text" name="state" class="form-control" placeholder="State" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-map-pin" style="margin-right: 6px; color: var(--gray-500);"></i>Pincode *</label>
+                        <input type="text" name="pincode" class="form-control" placeholder="6-digit pincode" pattern="[0-9]{6}" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-checkbox">
+                            <input type="checkbox" name="is_default">
+                            <span>Set as default address</span>
+                        </label>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" id="cancel-address-btn">
+                            <i class="fas fa-times"></i> Cancel
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Save Address
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Order Success Modal -->
+    <div class="modal" id="success-modal">
+        <div class="modal-content" style="text-align: center; padding: 40px 24px;">
+            <div style="width: 100px; height: 100px; margin: 0 auto 24px; border-radius: 50%; background: linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%); display: flex; align-items: center; justify-content: center;">
+                <i class="fas fa-check" style="font-size: 3rem; color: #10B981;"></i>
+            </div>
+            <h3 style="font-size: 1.5rem; font-weight: 600; color: #1F2937; margin-bottom: 12px;">Order Placed!</h3>
+            <p style="color: #6B7280; margin-bottom: 8px;">Your order has been placed successfully.</p>
+            <p style="color: #6B7280; margin-bottom: 24px;">Order ID: <strong id="success-order-id" style="color: #FF6A2B;">#FC-XXXXXX</strong></p>
+            <div style="display: flex; gap: 12px; justify-content: center;">
+                <a href="orders.html" class="btn btn-primary" style="text-decoration: none;">
+                    <i class="fas fa-box"></i> Track Order
+                </a>
+                <a href="home.html" class="btn btn-secondary" style="text-decoration: none;">
+                    <i class="fas fa-home"></i> Home
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loading-overlay">
+        <div class="loading-spinner"></div>
+    </div>
+
+    <!-- Toast Notifications Container -->
+    <div id="toast-container"></div>
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- Common Utilities -->
+    <script src="../js/common.js"></script>
+
+    <!-- Checkout JS -->
+    <script src="../js/checkout.js"></script>
+</body>
+</html>

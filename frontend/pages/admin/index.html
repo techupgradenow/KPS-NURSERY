@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- SEO Meta Tags - Admin Panel (noindex) -->
+    <title>Dashboard - SK Bakers Admin Panel</title>
+    <meta name="description" content="SK Bakers Admin Dashboard - Manage orders, products, customers and more.">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="googlebot" content="noindex, nofollow">
+    <meta name="author" content="SK Bakers Kovilpatti">
+
+    <!-- Cache Prevention -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+
+    <!-- Favicon & App Icons -->
+    <link rel="icon" type="image/webp" href="../../logo.webp">
+    <link rel="icon" type="image/png" href="../../assets/logo.png">
+    <link rel="shortcut icon" type="image/png" href="../../assets/logo.png">
+    <link rel="apple-touch-icon" href="../../assets/logo.png">
+
+    <!-- Theme Color -->
+    <meta name="theme-color" content="#B03359">
+    <meta name="msapplication-TileColor" content="#B03359">
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/admin.css?v=5.0">
+    <style>
+        /* New Order Notification Styles */
+        .notification-popup {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+            color: white;
+            padding: 20px 24px;
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(34, 197, 94, 0.4);
+            z-index: 10000;
+            transform: translateX(400px);
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            max-width: 380px;
+            cursor: pointer;
+        }
+        .notification-popup.show {
+            transform: translateX(0);
+            opacity: 1;
+        }
+        .notification-popup .notif-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+        .notification-popup .notif-icon {
+            width: 50px;
+            height: 50px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            animation: pulse-ring 1.5s infinite;
+        }
+        @keyframes pulse-ring {
+            0% { box-shadow: 0 0 0 0 rgba(255,255,255,0.5); }
+            70% { box-shadow: 0 0 0 15px rgba(255,255,255,0); }
+            100% { box-shadow: 0 0 0 0 rgba(255,255,255,0); }
+        }
+        .notification-popup .notif-title {
+            font-size: 18px;
+            font-weight: 700;
+        }
+        .notification-popup .notif-subtitle {
+            font-size: 13px;
+            opacity: 0.9;
+        }
+        .notification-popup .notif-body {
+            background: rgba(255,255,255,0.15);
+            padding: 12px 16px;
+            border-radius: 10px;
+            margin-bottom: 12px;
+        }
+        .notification-popup .notif-body p {
+            margin: 4px 0;
+            font-size: 14px;
+        }
+        .notification-popup .notif-body strong {
+            color: #fef3c7;
+        }
+        .notification-popup .notif-actions {
+            display: flex;
+            gap: 10px;
+        }
+        .notification-popup .btn-view-order {
+            flex: 1;
+            padding: 10px 16px;
+            background: white;
+            color: #166534;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .notification-popup .btn-view-order:hover {
+            transform: scale(1.02);
+        }
+        .notification-popup .btn-dismiss {
+            padding: 10px 16px;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .notification-popup .btn-dismiss:hover {
+            background: rgba(255,255,255,0.3);
+        }
+        .notification-popup .notif-close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+            opacity: 0.7;
+        }
+        .notification-popup .notif-close:hover {
+            opacity: 1;
+        }
+
+        /* Notification Sound Toggle */
+        .sound-toggle {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            background: #f3f4f6;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-right: 10px;
+            transition: all 0.2s;
+        }
+        .sound-toggle:hover {
+            background: #e5e7eb;
+        }
+        .sound-toggle.muted {
+            color: #9ca3af;
+        }
+        .sound-toggle i {
+            font-size: 16px;
+        }
+
+        /* Pulse animation for bell icon when new orders */
+        .header-icon.has-new {
+            animation: bell-shake 0.5s ease-in-out infinite;
+        }
+        @keyframes bell-shake {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(15deg); }
+            50% { transform: rotate(0deg); }
+            75% { transform: rotate(-15deg); }
+        }
+
+        /* Quick Status Select in Dashboard Table */
+        .status-select {
+            padding: 6px 24px 6px 10px;
+            border: 2px solid #e5e7eb;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            appearance: none;
+            -webkit-appearance: none;
+            background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10'%3E%3Cpath fill='%236b7280' d='M5 7L1 3h8z'/%3E%3C/svg%3E") no-repeat right 6px center;
+            min-width: 110px;
+            transition: all 0.2s ease;
+        }
+        .status-select:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.15);
+        }
+        .status-select.status-pending {
+            background-color: #fef3c7;
+            border-color: #f59e0b;
+            color: #92400e;
+        }
+        .status-select.status-confirmed {
+            background-color: #dcfce7;
+            border-color: #22c55e;
+            color: #166534;
+        }
+        .status-select.status-preparing {
+            background-color: #dbeafe;
+            border-color: #3b82f6;
+            color: #1e40af;
+        }
+        .status-select.status-ready {
+            background-color: #e0e7ff;
+            border-color: #6366f1;
+            color: #3730a3;
+        }
+        .status-select.status-out_for_delivery {
+            background-color: #ede9fe;
+            border-color: #8b5cf6;
+            color: #5b21b6;
+        }
+        .status-select.status-delivered {
+            background-color: #d1fae5;
+            border-color: #10b981;
+            color: #065f46;
+        }
+        .status-select.status-cancelled {
+            background-color: #fee2e2;
+            border-color: #ef4444;
+            color: #991b1b;
+        }
+
+        /* Action button in dashboard */
+        .action-btn-sm {
+            width: 32px;
+            height: 32px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            background: #dbeafe;
+            color: #3b82f6;
+        }
+        .action-btn-sm:hover {
+            transform: scale(1.1);
+            background: #bfdbfe;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-layout">
+        <!-- Mobile Sidebar Overlay -->
+        <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <img src="../../logo.webp" alt="SK Bakers" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 40 40%22><rect fill=%22%23B03359%22 width=%2240%22 height=%2240%22 rx=%228%22/><text x=%2250%%22 y=%2255%%22 fill=%22white%22 font-size=%2214%22 font-weight=%22bold%22 text-anchor=%22middle%22>SK</text></svg>'">
+                <h2>SK Bakers</h2>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="index.html" class="nav-item active">
+                    <i class="fas fa-th-large"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="orders.html" class="nav-item">
+                    <i class="fas fa-shopping-bag"></i>
+                    <span>Orders</span>
+                </a>
+                <a href="products.html" class="nav-item">
+                    <i class="fas fa-box"></i>
+                    <span>Products</span>
+                </a>
+                <a href="menu.html" class="nav-item">
+                    <i class="fas fa-utensils"></i>
+                    <span>Menu Card</span>
+                </a>
+                <a href="categories.html" class="nav-item">
+                    <i class="fas fa-folder"></i>
+                    <span>Categories</span>
+                </a>
+                <a href="customers.html" class="nav-item">
+                    <i class="fas fa-users"></i>
+                    <span>Customers</span>
+                </a>
+                <div class="nav-divider"></div>
+                <a href="banners.html" class="nav-item">
+                    <i class="fas fa-images"></i>
+                    <span>Banners</span>
+                </a>
+                <a href="popups.html" class="nav-item">
+                    <i class="fas fa-bullhorn"></i>
+                    <span>Offer Popups</span>
+                </a>
+                <div class="nav-divider"></div>
+                <a href="#" class="nav-item" onclick="AdminAPI.logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="admin-header">
+                <div class="header-left">
+                    <button class="toggle-sidebar">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <h1 class="page-title">Dashboard</h1>
+                </div>
+                <div class="header-right">
+                    <div class="sound-toggle" id="soundToggle" onclick="toggleNotificationSound()" title="Toggle notification sound">
+                        <i class="fas fa-volume-up" id="soundIcon"></i>
+                    </div>
+                    <div class="header-icon" id="bellIcon" onclick="window.location.href='orders.html?status=pending'">
+                        <i class="fas fa-bell"></i>
+                        <span class="badge" id="pendingOrdersBadge">0</span>
+                    </div>
+                    <div class="admin-profile">
+                        <div class="admin-avatar">A</div>
+                        <div class="admin-info">
+                            <div class="admin-name">Admin</div>
+                            <div class="admin-role">Administrator</div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Content -->
+            <div class="content-area">
+                <!-- Stats Grid -->
+                <div class="stats-grid" id="statsGrid">
+                    <div class="stat-card">
+                        <div class="stat-icon primary">
+                            <i class="fas fa-shopping-bag"></i>
+                        </div>
+                        <div class="stat-details">
+                            <h3 id="totalOrders">0</h3>
+                            <p>Total Orders</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon success">
+                            <i class="fas fa-rupee-sign"></i>
+                        </div>
+                        <div class="stat-details">
+                            <h3 id="totalRevenue">₹0</h3>
+                            <p>Total Revenue</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon warning">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="stat-details">
+                            <h3 id="pendingOrders">0</h3>
+                            <p>Pending Orders</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon info">
+                            <i class="fas fa-box"></i>
+                        </div>
+                        <div class="stat-details">
+                            <h3 id="totalProducts">0</h3>
+                            <p>Total Products</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Secondary Stats -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon success">
+                            <i class="fas fa-calendar-day"></i>
+                        </div>
+                        <div class="stat-details">
+                            <h3 id="todayOrders">0</h3>
+                            <p>Today's Orders</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon info">
+                            <i class="fas fa-calendar-check"></i>
+                        </div>
+                        <div class="stat-details">
+                            <h3 id="todayRevenue">₹0</h3>
+                            <p>Today's Revenue</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon warning">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                        <div class="stat-details">
+                            <h3 id="lowStockProducts">0</h3>
+                            <p>Low Stock Items</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon primary">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="stat-details">
+                            <h3 id="totalUsers">0</h3>
+                            <p>Total Customers</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dashboard-grid">
+                    <!-- Recent Orders -->
+                    <div class="card recent-orders-card">
+                        <div class="card-header">
+                            <h3 class="card-title">Recent Orders</h3>
+                            <a href="orders.html" class="btn btn-outline btn-sm">View All</a>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-container">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Order ID</th>
+                                            <th>Customer</th>
+                                            <th>Total</th>
+                                            <th>Status</th>
+                                            <th>Date</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="recentOrdersTable">
+                                        <tr>
+                                            <td colspan="6" class="loading">
+                                                <div class="loading-spinner"></div>
+                                                Loading...
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Top Products -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Top Selling Products</h3>
+                        </div>
+                        <div class="card-body" id="topProductsList">
+                            <div class="loading">
+                                <div class="loading-spinner"></div>
+                                Loading...
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Order Status Distribution -->
+                <div class="card" style="margin-top: 20px;">
+                    <div class="card-header">
+                        <h3 class="card-title">Order Status Distribution</h3>
+                    </div>
+                    <div class="card-body">
+                        <div id="orderStatusChart" style="display: flex; gap: 20px; flex-wrap: wrap;">
+                            <!-- Status cards will be rendered here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- New Order Notification Popup -->
+    <div class="notification-popup" id="orderNotification">
+        <button class="notif-close" onclick="dismissNotification()">&times;</button>
+        <div class="notif-header">
+            <div class="notif-icon">
+                <i class="fas fa-shopping-bag"></i>
+            </div>
+            <div>
+                <div class="notif-title">New Order Received!</div>
+                <div class="notif-subtitle" id="notifTime">Just now</div>
+            </div>
+        </div>
+        <div class="notif-body">
+            <p><strong>Order ID:</strong> <span id="notifOrderId">-</span></p>
+            <p><strong>Customer:</strong> <span id="notifCustomer">-</span></p>
+            <p><strong>Amount:</strong> <span id="notifAmount">-</span></p>
+            <p><strong>Items:</strong> <span id="notifItems">-</span></p>
+        </div>
+        <div class="notif-actions">
+            <button class="btn-view-order" onclick="viewNewOrder()">
+                <i class="fas fa-eye"></i> View Order
+            </button>
+            <button class="btn-dismiss" onclick="dismissNotification()">
+                Dismiss
+            </button>
+        </div>
+    </div>
+
+    <script src="js/admin.js"></script>
+    <script>
+        // Load dashboard data
+        document.addEventListener('DOMContentLoaded', async function() {
+            await loadDashboard();
+        });
+
+        async function loadDashboard() {
+            try {
+                const response = await AdminAPI.call('/dashboard', 'GET');
+
+                if (response.success) {
+                    const data = response.data;
+
+                    // Update stats
+                    document.getElementById('totalOrders').textContent = data.total_orders || 0;
+                    document.getElementById('totalRevenue').textContent = AdminAPI.formatCurrency(data.total_revenue || 0);
+                    document.getElementById('pendingOrders').textContent = data.pending_orders || 0;
+                    document.getElementById('totalProducts').textContent = data.total_products || 0;
+                    document.getElementById('todayOrders').textContent = data.today_orders || 0;
+                    document.getElementById('todayRevenue').textContent = AdminAPI.formatCurrency(data.today_revenue || 0);
+                    document.getElementById('lowStockProducts').textContent = data.low_stock_products || 0;
+                    document.getElementById('totalUsers').textContent = data.total_users || 0;
+                    document.getElementById('pendingOrdersBadge').textContent = data.pending_orders || 0;
+
+                    // Render recent orders
+                    renderRecentOrders(data.recent_orders || []);
+
+                    // Render top products
+                    renderTopProducts(data.top_products || []);
+
+                    // Render order status distribution
+                    renderOrderStatus(data.order_status_distribution || []);
+                } else {
+                    AdminAPI.showToast('Failed to load dashboard data', 'error');
+                }
+            } catch (error) {
+                console.error('Dashboard error:', error);
+                AdminAPI.showToast('Failed to load dashboard', 'error');
+            }
+        }
+
+        function renderRecentOrders(orders) {
+            const tbody = document.getElementById('recentOrdersTable');
+
+            if (orders.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="empty-state">
+                            <i class="fas fa-shopping-bag"></i>
+                            <p>No orders yet</p>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = orders.map(order => `
+                <tr>
+                    <td><a href="orders.html?id=${order.id}" style="color: var(--primary); font-weight: 600;">${order.order_id}</a></td>
+                    <td>${order.customer_name || 'Guest'}</td>
+                    <td><strong>${AdminAPI.formatCurrency(order.total)}</strong></td>
+                    <td>
+                        <select class="status-select status-${order.status}" onchange="quickStatusChange(${order.id}, this.value)" data-order-id="${order.id}">
+                            <option value="pending" ${order.status === 'pending' ? 'selected' : ''}>Pending</option>
+                            <option value="confirmed" ${order.status === 'confirmed' ? 'selected' : ''}>Confirmed</option>
+                            <option value="preparing" ${order.status === 'preparing' ? 'selected' : ''}>Preparing</option>
+                            <option value="ready" ${order.status === 'ready' ? 'selected' : ''}>Ready</option>
+                            <option value="out_for_delivery" ${order.status === 'out_for_delivery' ? 'selected' : ''}>Out for Delivery</option>
+                            <option value="delivered" ${order.status === 'delivered' ? 'selected' : ''}>Delivered</option>
+                            <option value="cancelled" ${order.status === 'cancelled' ? 'selected' : ''}>Cancelled</option>
+                        </select>
+                    </td>
+                    <td>${AdminAPI.formatDate(order.created_at)}</td>
+                    <td>
+                        <button class="action-btn-sm" onclick="window.location.href='orders.html?id=${order.id}'" title="View Details">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // Quick status change function for dashboard
+        async function quickStatusChange(orderId, newStatus) {
+            const selectElement = document.querySelector(`select[data-order-id="${orderId}"]`);
+            const originalValue = selectElement.getAttribute('data-original-status') || selectElement.value;
+
+            // Show loading state
+            selectElement.disabled = true;
+            selectElement.style.opacity = '0.6';
+
+            try {
+                const response = await AdminAPI.call('/orders', 'PUT', {
+                    id: orderId,
+                    status: newStatus
+                });
+
+                if (response.success) {
+                    AdminAPI.showToast(`Order status updated to ${newStatus.replace('_', ' ')}`, 'success');
+                    // Update the select styling
+                    selectElement.className = `status-select status-${newStatus}`;
+                    selectElement.setAttribute('data-original-status', newStatus);
+                    // Refresh dashboard stats
+                    loadDashboard();
+                } else {
+                    AdminAPI.showToast(response.message || 'Failed to update status', 'error');
+                    selectElement.value = originalValue;
+                }
+            } catch (error) {
+                AdminAPI.showToast('Failed to update status', 'error');
+                selectElement.value = originalValue;
+            } finally {
+                selectElement.disabled = false;
+                selectElement.style.opacity = '1';
+            }
+        }
+
+        function renderTopProducts(products) {
+            const container = document.getElementById('topProductsList');
+
+            if (products.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-box"></i>
+                        <p>No sales data yet</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = products.map((product, index) => `
+                <div style="display: flex; align-items: center; gap: 15px; padding: 10px 0; border-bottom: 1px solid var(--gray-light);">
+                    <div style="width: 30px; height: 30px; background: var(--primary); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600;">
+                        ${index + 1}
+                    </div>
+                    <img src="${product.image || '../../assets/logo.png'}" alt="${product.name}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px;">
+                    <div style="flex: 1;">
+                        <div style="font-weight: 500;">${product.name}</div>
+                        <div style="font-size: 12px; color: var(--gray);">${product.total_sold} sold</div>
+                    </div>
+                    <div style="font-weight: 600; color: var(--success);">
+                        ${AdminAPI.formatCurrency(product.total_revenue)}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderOrderStatus(statusData) {
+            const container = document.getElementById('orderStatusChart');
+
+            const statusColors = {
+                pending: 'var(--warning)',
+                confirmed: 'var(--info)',
+                preparing: '#9c27b0',
+                out_for_delivery: '#00bcd4',
+                delivered: 'var(--success)',
+                cancelled: 'var(--danger)'
+            };
+
+            container.innerHTML = statusData.map(item => `
+                <div style="flex: 1; min-width: 150px; padding: 20px; background: ${statusColors[item.status]}15; border-radius: 8px; border-left: 4px solid ${statusColors[item.status]};">
+                    <div style="font-size: 24px; font-weight: 700; color: ${statusColors[item.status]};">${item.count}</div>
+                    <div style="font-size: 14px; color: var(--gray); text-transform: capitalize;">${item.status.replace(/_/g, ' ')}</div>
+                </div>
+            `).join('');
+        }
+
+        // ==========================================
+        // NEW ORDER NOTIFICATION SYSTEM
+        // ==========================================
+
+        let lastOrderCount = 0;
+        let lastOrderId = localStorage.getItem('lastSeenOrderId') || '';
+        let notificationSound = null;
+        let soundEnabled = localStorage.getItem('notificationSound') !== 'false';
+        let currentNewOrderId = null;
+        let checkInterval = null;
+
+        // Initialize notification system
+        function initNotificationSystem() {
+            // Create notification sound (using Web Audio API for better compatibility)
+            try {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                const audioCtx = new AudioContext();
+
+                notificationSound = {
+                    play: function() {
+                        if (!soundEnabled) return;
+
+                        // Play a pleasant notification sound
+                        const oscillator = audioCtx.createOscillator();
+                        const gainNode = audioCtx.createGain();
+
+                        oscillator.connect(gainNode);
+                        gainNode.connect(audioCtx.destination);
+
+                        // Create a pleasant two-tone notification
+                        oscillator.frequency.setValueAtTime(880, audioCtx.currentTime); // A5
+                        oscillator.frequency.setValueAtTime(1108, audioCtx.currentTime + 0.1); // C#6
+                        oscillator.frequency.setValueAtTime(1318, audioCtx.currentTime + 0.2); // E6
+
+                        gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                        gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
+
+                        oscillator.start(audioCtx.currentTime);
+                        oscillator.stop(audioCtx.currentTime + 0.5);
+                    }
+                };
+            } catch (e) {
+                console.log('Web Audio API not supported');
+                notificationSound = { play: function() {} };
+            }
+
+            // Update sound toggle icon
+            updateSoundIcon();
+
+            // Start checking for new orders
+            checkForNewOrders();
+            checkInterval = setInterval(checkForNewOrders, 15000); // Check every 15 seconds
+        }
+
+        // Toggle notification sound
+        function toggleNotificationSound() {
+            soundEnabled = !soundEnabled;
+            localStorage.setItem('notificationSound', soundEnabled);
+            updateSoundIcon();
+
+            if (soundEnabled) {
+                AdminAPI.showToast('Notification sound enabled', 'success');
+                // Play test sound
+                if (notificationSound) notificationSound.play();
+            } else {
+                AdminAPI.showToast('Notification sound muted', 'info');
+            }
+        }
+
+        // Update sound icon
+        function updateSoundIcon() {
+            const icon = document.getElementById('soundIcon');
+            const toggle = document.getElementById('soundToggle');
+
+            if (soundEnabled) {
+                icon.className = 'fas fa-volume-up';
+                toggle.classList.remove('muted');
+            } else {
+                icon.className = 'fas fa-volume-mute';
+                toggle.classList.add('muted');
+            }
+        }
+
+        // Check for new orders
+        async function checkForNewOrders() {
+            try {
+                const response = await AdminAPI.call('/orders?limit=1&status=pending', 'GET');
+
+                if (response.success && response.data.data && response.data.data.length > 0) {
+                    const latestOrder = response.data.data[0];
+                    const currentOrderId = latestOrder.order_id;
+
+                    // Check if this is a new order we haven't seen
+                    if (lastOrderId && currentOrderId !== lastOrderId) {
+                        // New order detected!
+                        showNewOrderNotification(latestOrder);
+                    }
+
+                    // Update last seen order ID
+                    lastOrderId = currentOrderId;
+                    localStorage.setItem('lastSeenOrderId', currentOrderId);
+                }
+
+                // Update pending count
+                const pendingResponse = await AdminAPI.call('/dashboard', 'GET');
+                if (pendingResponse.success) {
+                    const pendingCount = pendingResponse.data.pending_orders || 0;
+                    document.getElementById('pendingOrdersBadge').textContent = pendingCount;
+                    document.getElementById('pendingOrders').textContent = pendingCount;
+
+                    // Animate bell if there are pending orders
+                    const bellIcon = document.getElementById('bellIcon');
+                    if (pendingCount > 0) {
+                        bellIcon.classList.add('has-new');
+                    } else {
+                        bellIcon.classList.remove('has-new');
+                    }
+                }
+            } catch (error) {
+                console.error('Error checking for new orders:', error);
+            }
+        }
+
+        // Show new order notification
+        function showNewOrderNotification(order) {
+            currentNewOrderId = order.id;
+
+            // Update notification content
+            document.getElementById('notifOrderId').textContent = order.order_id;
+            document.getElementById('notifCustomer').textContent = order.customer_name || 'Guest';
+            document.getElementById('notifAmount').textContent = AdminAPI.formatCurrency(order.total);
+            document.getElementById('notifItems').textContent = (order.item_count || 1) + ' item(s)';
+            document.getElementById('notifTime').textContent = 'Just now';
+
+            // Show notification popup
+            const popup = document.getElementById('orderNotification');
+            popup.classList.add('show');
+
+            // Play notification sound
+            if (notificationSound && soundEnabled) {
+                notificationSound.play();
+            }
+
+            // Also show browser notification if permitted
+            showBrowserNotification(order);
+
+            // Refresh dashboard data
+            loadDashboard();
+
+            // Auto-dismiss after 30 seconds
+            setTimeout(() => {
+                dismissNotification();
+            }, 30000);
+        }
+
+        // Show browser notification
+        async function showBrowserNotification(order) {
+            if (!('Notification' in window)) return;
+
+            if (Notification.permission === 'granted') {
+                new Notification('New Order - SK Bakers', {
+                    body: `Order ${order.order_id}\n${order.customer_name || 'Guest'} - ${AdminAPI.formatCurrency(order.total)}`,
+                    icon: '../../assets/logo.png',
+                    tag: 'new-order'
+                });
+            } else if (Notification.permission !== 'denied') {
+                const permission = await Notification.requestPermission();
+                if (permission === 'granted') {
+                    showBrowserNotification(order);
+                }
+            }
+        }
+
+        // View new order
+        function viewNewOrder() {
+            if (currentNewOrderId) {
+                window.location.href = `orders.html?id=${currentNewOrderId}`;
+            } else {
+                window.location.href = 'orders.html?status=pending';
+            }
+        }
+
+        // Dismiss notification
+        function dismissNotification() {
+            const popup = document.getElementById('orderNotification');
+            popup.classList.remove('show');
+        }
+
+        // Request notification permission on page load
+        function requestNotificationPermission() {
+            if ('Notification' in window && Notification.permission === 'default') {
+                Notification.requestPermission();
+            }
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            initNotificationSystem();
+            requestNotificationPermission();
+        });
+
+        // Clean up on page unload
+        window.addEventListener('beforeunload', function() {
+            if (checkInterval) {
+                clearInterval(checkInterval);
+            }
+        });
+    </script>
+</body>
+</html>

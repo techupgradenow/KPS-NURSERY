@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- SEO Meta Tags - Admin Panel (noindex) -->
+    <title>Admin Login - SK Bakers</title>
+    <meta name="description" content="SK Bakers Admin Login - Secure access to admin panel.">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="googlebot" content="noindex, nofollow">
+    <meta name="author" content="SK Bakers Kovilpatti">
+
+    <!-- Favicon & App Icons -->
+    <link rel="icon" type="image/webp" href="../../logo.webp">
+    <link rel="icon" type="image/png" href="../../assets/logo.png">
+    <link rel="shortcut icon" type="image/png" href="../../assets/logo.png">
+    <link rel="apple-touch-icon" href="../../assets/logo.png">
+
+    <!-- Theme Color -->
+    <meta name="theme-color" content="#B03359">
+    <meta name="msapplication-TileColor" content="#B03359">
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/admin.css">
+    <style>
+        /* Login Header Logo */
+        .login-header img {
+            width: 80px;
+            height: 80px;
+            border-radius: 16px;
+            margin-bottom: 15px;
+            object-fit: cover;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        /* Password Field Container - Override all defaults */
+        .login-form .form-group.password-group {
+            position: relative;
+        }
+
+        .login-form .form-group.password-group .password-input-container {
+            position: relative;
+            width: 100%;
+        }
+
+        /* Lock icon on the left */
+        .login-form .form-group.password-group .password-input-container .icon-lock {
+            position: absolute !important;
+            left: 15px !important;
+            top: 50% !important;
+            transform: translateY(-50%) !important;
+            color: #9e9e9e !important;
+            font-size: 14px !important;
+            z-index: 3 !important;
+            pointer-events: none;
+        }
+
+        /* Password input styling */
+        .login-form .form-group.password-group .password-input-container input.form-control {
+            padding-left: 45px !important;
+            padding-right: 50px !important;
+            width: 100% !important;
+        }
+
+        /* Eye toggle button on the right */
+        .login-form .form-group.password-group .password-input-container .password-toggle-btn {
+            position: absolute !important;
+            right: 10px !important;
+            top: 50% !important;
+            transform: translateY(-50%) !important;
+            background: none !important;
+            border: none !important;
+            cursor: pointer !important;
+            color: #9e9e9e !important;
+            padding: 8px !important;
+            font-size: 16px !important;
+            z-index: 5 !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            transition: color 0.2s ease !important;
+        }
+
+        .login-form .form-group.password-group .password-input-container .password-toggle-btn:hover {
+            color: #e53935 !important;
+        }
+
+        .login-form .form-group.password-group .password-input-container .password-toggle-btn i {
+            position: static !important;
+            transform: none !important;
+            left: auto !important;
+            top: auto !important;
+        }
+    </style>
+</head>
+<body class="login-page">
+    <div class="login-container">
+        <div class="login-header">
+            <img src="../../logo.webp" alt="SK Bakers" onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 80 80%22%3E%3Crect fill=%22%23B03359%22 width=%2280%22 height=%2280%22 rx=%2216%22/%3E%3Ctext x=%2250%25%22 y=%2255%25%22 fill=%22white%22 font-size=%2224%22 font-weight=%22bold%22 text-anchor=%22middle%22%3ESK%3C/text%3E%3C/svg%3E';">
+            <h1>Admin Panel</h1>
+            <p>Sign in to manage your store</p>
+        </div>
+
+        <form class="login-form" id="loginForm">
+            <div class="form-group">
+                <label for="username">Username or Email</label>
+                <i class="fas fa-user"></i>
+                <input type="text" id="username" class="form-control" placeholder="Enter username or email" required>
+            </div>
+
+            <div class="form-group password-group">
+                <label for="password">Password</label>
+                <div class="password-input-container">
+                    <i class="fas fa-lock icon-lock"></i>
+                    <input type="password" id="password" class="form-control" placeholder="Enter password" required>
+                    <button type="button" class="password-toggle-btn" onclick="togglePassword()" aria-label="Toggle password visibility">
+                        <i class="fas fa-eye" id="toggleIcon"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="forgot-password">
+                <a href="#" id="forgotPasswordLink">Forgot Password?</a>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-lg" style="width: 100%;">
+                <i class="fas fa-sign-in-alt"></i>
+                Sign In
+            </button>
+        </form>
+
+        <div id="loginError" class="alert alert-danger" style="display: none; margin-top: 20px;">
+            <i class="fas fa-exclamation-circle"></i>
+            <span id="errorMessage"></span>
+        </div>
+
+        <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e0e0e0; text-align: center;">
+            <p style="color: #9e9e9e; font-size: 12px;">
+                Default credentials: admin / admin123
+            </p>
+        </div>
+    </div>
+
+    <!-- Forgot Password Modal -->
+    <div class="modal-overlay" id="forgotPasswordModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">Reset Password</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="forgotPasswordForm">
+                    <div class="form-group">
+                        <label for="resetEmail">Email Address</label>
+                        <input type="email" id="resetEmail" class="form-control" placeholder="Enter your email" required>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline" onclick="AdminAPI.closeModal('forgotPasswordModal')">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="handleForgotPassword()">Send Reset Link</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/admin.js"></script>
+    <script>
+        // Check if already logged in
+        const session = localStorage.getItem('admin_session');
+        if (session) {
+            window.location.href = 'index.html';
+        }
+
+        // Login form handler
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value;
+
+            if (!username || !password) {
+                showError('Please enter username and password');
+                return;
+            }
+
+            const submitBtn = this.querySelector('button[type="submit"]');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Signing in...';
+
+            try {
+                await AdminAPI.login(username, password);
+            } catch (error) {
+                showError('Login failed. Please try again.');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Sign In';
+            }
+        });
+
+        // Forgot password link
+        document.getElementById('forgotPasswordLink').addEventListener('click', function(e) {
+            e.preventDefault();
+            AdminAPI.openModal('forgotPasswordModal');
+        });
+
+        // Forgot password handler
+        async function handleForgotPassword() {
+            const email = document.getElementById('resetEmail').value.trim();
+            if (!email) {
+                AdminAPI.showToast('Please enter your email', 'error');
+                return;
+            }
+
+            try {
+                const response = await AdminAPI.call('auth.php', 'POST', {
+                    action: 'forgot_password',
+                    email: email
+                });
+                AdminAPI.showToast(response.message || 'If this email exists, a reset link has been sent', 'success');
+                AdminAPI.closeModal('forgotPasswordModal');
+            } catch (error) {
+                AdminAPI.showToast('Failed to send reset email', 'error');
+            }
+        }
+
+        function showError(message) {
+            const errorDiv = document.getElementById('loginError');
+            const errorMsg = document.getElementById('errorMessage');
+            errorMsg.textContent = message;
+            errorDiv.style.display = 'flex';
+            setTimeout(() => {
+                errorDiv.style.display = 'none';
+            }, 5000);
+        }
+
+        function togglePassword() {
+            const passwordInput = document.getElementById('password');
+            const toggleIcon = document.getElementById('toggleIcon');
+
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleIcon.classList.remove('fa-eye');
+                toggleIcon.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                toggleIcon.classList.remove('fa-eye-slash');
+                toggleIcon.classList.add('fa-eye');
+            }
+        }
+    </script>
+</body>
+</html>

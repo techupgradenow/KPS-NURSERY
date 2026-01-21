@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SK Bakers - Fresh Sweets & Cakes Delivery</title>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="../css/style.css?v=6.0">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Splash Screen -->
+        <div id="splash-screen" class="screen active">
+            <div class="login-container">
+                <div class="login-logo">
+                    <img src="../logo.webp" alt="SK Bakers Logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                    <i class="fas fa-birthday-cake" style="display: none; font-size: 4rem; color: var(--primary);"></i>
+                    <h1>SK Bakers</h1>
+                    <p>Fresh Sweets & Cakes Delivery</p>
+                </div>
+                <div class="loading-spinner">
+                    <i class="fas fa-spinner fa-spin fa-2x" style="color: var(--primary);"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- Splash Page Script -->
+    <script>
+        $(document).ready(function() {
+            // Auto redirect to home page after 2 seconds
+            setTimeout(function() {
+                window.location.href = 'home.html';
+            }, 2000);
+        });
+    </script>
+</body>
+</html>

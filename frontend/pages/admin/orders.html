@@ -1,0 +1,910 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- SEO Meta Tags - Admin Panel (noindex) -->
+    <title>Orders Management - SK Bakers Admin Panel</title>
+    <meta name="description" content="SK Bakers Admin - Manage and track all customer orders.">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="googlebot" content="noindex, nofollow">
+    <meta name="author" content="SK Bakers Kovilpatti">
+
+    <!-- Cache Prevention -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+
+    <!-- Favicon & App Icons -->
+    <link rel="icon" type="image/webp" href="../../logo.webp">
+    <link rel="icon" type="image/png" href="../../assets/logo.png">
+    <link rel="shortcut icon" type="image/png" href="../../assets/logo.png">
+    <link rel="apple-touch-icon" href="../../assets/logo.png">
+
+    <!-- Theme Color -->
+    <meta name="theme-color" content="#B03359">
+    <meta name="msapplication-TileColor" content="#B03359">
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/admin.css?v=5.0">
+    <style>
+        /* Enhanced Filter Bar Styles */
+        .filters-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            padding: 20px;
+            background: var(--white);
+            border-radius: 16px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            margin-bottom: 20px;
+            align-items: center;
+        }
+
+        .filters-bar .search-box {
+            flex: 1;
+            min-width: 250px;
+            position: relative;
+        }
+
+        .filters-bar .search-box i {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9e9e9e;
+            font-size: 14px;
+        }
+
+        .filters-bar .search-box input {
+            width: 100%;
+            padding: 12px 14px 12px 42px;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 14px;
+            transition: all 0.2s ease;
+            background: #f9fafb;
+        }
+
+        .filters-bar .search-box input:focus {
+            border-color: var(--primary);
+            background: var(--white);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.1);
+        }
+
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .filter-group label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #6b7280;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+        }
+
+        .filter-select {
+            padding: 12px 36px 12px 14px;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 14px;
+            background: #f9fafb url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236b7280' d='M6 8L1 3h10z'/%3E%3C/svg%3E") no-repeat right 12px center;
+            appearance: none;
+            cursor: pointer;
+            min-width: 140px;
+            transition: all 0.2s ease;
+        }
+
+        .filter-select:focus {
+            border-color: var(--primary);
+            background-color: var(--white);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.1);
+        }
+
+        .filter-date {
+            padding: 12px 14px;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 14px;
+            background: #f9fafb;
+            cursor: pointer;
+            min-width: 150px;
+            transition: all 0.2s ease;
+        }
+
+        .filter-date:focus {
+            border-color: var(--primary);
+            background: var(--white);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.1);
+        }
+
+        .date-range-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: #f3f4f6;
+            padding: 6px 12px;
+            border-radius: 12px;
+        }
+
+        .date-range-group .date-separator {
+            color: #9ca3af;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .date-range-group .filter-date {
+            min-width: 130px;
+            background: var(--white);
+            border: 1px solid #e5e7eb;
+        }
+
+        .filter-actions {
+            display: flex;
+            gap: 8px;
+            margin-left: auto;
+        }
+
+        .btn-refresh {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 20px;
+            background: linear-gradient(135deg, var(--primary) 0%, #16a34a 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 8px rgba(34, 197, 94, 0.3);
+        }
+
+        .btn-refresh:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(34, 197, 94, 0.4);
+        }
+
+        .btn-refresh:active {
+            transform: translateY(0);
+        }
+
+        .btn-clear {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 12px 16px;
+            background: #f3f4f6;
+            color: #6b7280;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-clear:hover {
+            background: #e5e7eb;
+            color: #374151;
+        }
+
+        /* Status indicator colors for filter */
+        .filter-select option[value="pending"] { color: #f59e0b; }
+        .filter-select option[value="confirmed"] { color: #22c55e; }
+        .filter-select option[value="preparing"] { color: #3b82f6; }
+        .filter-select option[value="out_for_delivery"] { color: #8b5cf6; }
+        .filter-select option[value="delivered"] { color: #10b981; }
+        .filter-select option[value="cancelled"] { color: #ef4444; }
+
+        /* Mobile responsive */
+        @media (max-width: 768px) {
+            .filters-bar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .filters-bar .search-box {
+                min-width: 100%;
+            }
+
+            .filter-group {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .filter-select,
+            .filter-date {
+                width: 100%;
+            }
+
+            .date-range-group {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .date-range-group .filter-date {
+                width: 100%;
+                min-width: auto;
+            }
+
+            .filter-actions {
+                width: 100%;
+                margin-left: 0;
+            }
+
+            .filter-actions button {
+                flex: 1;
+            }
+        }
+
+        /* Quick Status Select in Table */
+        .status-select {
+            padding: 8px 28px 8px 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            appearance: none;
+            -webkit-appearance: none;
+            background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10'%3E%3Cpath fill='%236b7280' d='M5 7L1 3h8z'/%3E%3C/svg%3E") no-repeat right 8px center;
+            min-width: 130px;
+            transition: all 0.2s ease;
+        }
+        .status-select:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.15);
+        }
+        .status-select:hover {
+            border-color: #d1d5db;
+        }
+        /* Status-specific colors */
+        .status-select.status-pending {
+            background-color: #fef3c7;
+            border-color: #f59e0b;
+            color: #92400e;
+        }
+        .status-select.status-confirmed {
+            background-color: #dcfce7;
+            border-color: #22c55e;
+            color: #166534;
+        }
+        .status-select.status-preparing {
+            background-color: #dbeafe;
+            border-color: #3b82f6;
+            color: #1e40af;
+        }
+        .status-select.status-ready {
+            background-color: #e0e7ff;
+            border-color: #6366f1;
+            color: #3730a3;
+        }
+        .status-select.status-out_for_delivery {
+            background-color: #ede9fe;
+            border-color: #8b5cf6;
+            color: #5b21b6;
+        }
+        .status-select.status-delivered {
+            background-color: #d1fae5;
+            border-color: #10b981;
+            color: #065f46;
+        }
+        .status-select.status-cancelled {
+            background-color: #fee2e2;
+            border-color: #ef4444;
+            color: #991b1b;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-layout">
+        <!-- Mobile Sidebar Overlay -->
+        <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <img src="../../logo.webp" alt="SK Bakers" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 40 40%22><rect fill=%22%23B03359%22 width=%2240%22 height=%2240%22 rx=%228%22/><text x=%2250%%22 y=%2255%%22 fill=%22white%22 font-size=%2214%22 font-weight=%22bold%22 text-anchor=%22middle%22>SK</text></svg>'">
+                <h2>SK Bakers</h2>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="index.html" class="nav-item">
+                    <i class="fas fa-th-large"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="orders.html" class="nav-item active">
+                    <i class="fas fa-shopping-bag"></i>
+                    <span>Orders</span>
+                </a>
+                <a href="products.html" class="nav-item">
+                    <i class="fas fa-box"></i>
+                    <span>Products</span>
+                </a>
+                <a href="menu.html" class="nav-item">
+                    <i class="fas fa-utensils"></i>
+                    <span>Menu Card</span>
+                </a>
+                <a href="categories.html" class="nav-item">
+                    <i class="fas fa-folder"></i>
+                    <span>Categories</span>
+                </a>
+                <a href="customers.html" class="nav-item">
+                    <i class="fas fa-users"></i>
+                    <span>Customers</span>
+                </a>
+                <div class="nav-divider"></div>
+                <a href="banners.html" class="nav-item">
+                    <i class="fas fa-images"></i>
+                    <span>Banners</span>
+                </a>
+                <a href="popups.html" class="nav-item">
+                    <i class="fas fa-bullhorn"></i>
+                    <span>Offer Popups</span>
+                </a>
+                <div class="nav-divider"></div>
+                <a href="#" class="nav-item" onclick="AdminAPI.logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="admin-header">
+                <div class="header-left">
+                    <button class="toggle-sidebar">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <h1 class="page-title">Orders</h1>
+                </div>
+                <div class="header-right">
+                    <div class="admin-profile">
+                        <div class="admin-avatar">A</div>
+                        <div class="admin-info">
+                            <div class="admin-name">Admin</div>
+                            <div class="admin-role">Administrator</div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <div class="content-area">
+                <!-- Enhanced Filters -->
+                <div class="filters-bar">
+                    <!-- Search Box -->
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="searchInput" placeholder="Search by Order ID, Customer name, Mobile..." onkeyup="handleSearch(event)">
+                    </div>
+
+                    <!-- Status Filter -->
+                    <div class="filter-group">
+                        <label><i class="fas fa-filter"></i> Status</label>
+                        <select class="filter-select" id="statusFilter" onchange="loadOrders()">
+                            <option value="">All Status</option>
+                            <option value="pending">🟡 Pending</option>
+                            <option value="confirmed">🟢 Confirmed</option>
+                            <option value="preparing">🔵 Preparing</option>
+                            <option value="out_for_delivery">🟣 Out for Delivery</option>
+                            <option value="delivered">✅ Delivered</option>
+                            <option value="cancelled">🔴 Cancelled</option>
+                        </select>
+                    </div>
+
+                    <!-- Date Range Filter -->
+                    <div class="filter-group">
+                        <label><i class="fas fa-calendar-alt"></i> Date Range</label>
+                        <div class="date-range-group">
+                            <input type="date" id="fromDate" class="filter-date" onchange="loadOrders()" title="From Date">
+                            <span class="date-separator">to</span>
+                            <input type="date" id="toDate" class="filter-date" onchange="loadOrders()" title="To Date">
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="filter-actions">
+                        <button class="btn-clear" onclick="clearFilters()" title="Clear all filters">
+                            <i class="fas fa-times"></i> Clear
+                        </button>
+                        <button class="btn-refresh" onclick="loadOrders()">
+                            <i class="fas fa-sync-alt"></i> Refresh
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Orders Table -->
+                <div class="card">
+                    <div class="card-body">
+                        <div class="table-container">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Order ID</th>
+                                        <th>Customer</th>
+                                        <th>Items</th>
+                                        <th>Total</th>
+                                        <th>Payment</th>
+                                        <th>Status</th>
+                                        <th>Order Date</th>
+                                        <th>Delivery Date</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="ordersTable">
+                                    <tr>
+                                        <td colspan="9" class="loading">
+                                            <div class="loading-spinner"></div>
+                                            Loading...
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="pagination" id="pagination"></div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Order Details Modal -->
+    <div class="modal-overlay" id="orderModal">
+        <div class="modal" style="max-width: 800px;">
+            <div class="modal-header">
+                <h3 class="modal-title">Order Details</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body" id="orderDetails">
+                <div class="loading">
+                    <div class="loading-spinner"></div>
+                    Loading...
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline" onclick="AdminAPI.closeModal('orderModal')">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Update Status Modal -->
+    <div class="modal-overlay" id="statusModal">
+        <div class="modal" style="max-width: 400px;">
+            <div class="modal-header">
+                <h3 class="modal-title">Update Order Status</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="updateOrderId">
+                <div class="form-group">
+                    <label for="newStatus">New Status</label>
+                    <select id="newStatus" class="form-control">
+                        <option value="pending">Pending</option>
+                        <option value="confirmed">Confirmed</option>
+                        <option value="preparing">Preparing</option>
+                        <option value="out_for_delivery">Out for Delivery</option>
+                        <option value="delivered">Delivered</option>
+                        <option value="cancelled">Cancelled</option>
+                    </select>
+                </div>
+                <div class="form-group" id="cancelReasonGroup" style="display: none;">
+                    <label for="cancelReason">Cancellation Reason</label>
+                    <textarea id="cancelReason" class="form-control" rows="2"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline" onclick="AdminAPI.closeModal('statusModal')">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="updateOrderStatus()">Update Status</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/admin.js"></script>
+    <script>
+        let currentPage = 1;
+
+        // Format delivery date to readable format
+        function formatDeliveryDate(dateStr) {
+            if (!dateStr) return '-';
+            const date = new Date(dateStr);
+            const options = { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' };
+            return date.toLocaleDateString('en-IN', options);
+        }
+
+        // Format order date (created_at) to readable format
+        function formatOrderDate(dateStr) {
+            if (!dateStr) return '-';
+            const date = new Date(dateStr);
+            const options = { day: 'numeric', month: 'short', year: 'numeric' };
+            return date.toLocaleDateString('en-IN', options);
+        }
+
+        // Format order time from created_at
+        function formatOrderTime(dateStr) {
+            if (!dateStr) return '-';
+            const date = new Date(dateStr);
+            return date.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true });
+        }
+
+        document.addEventListener('DOMContentLoaded', async function() {
+            // Check for URL parameters
+            const params = new URLSearchParams(window.location.search);
+            if (params.get('status')) {
+                document.getElementById('statusFilter').value = params.get('status');
+            }
+            if (params.get('id')) {
+                viewOrder(params.get('id'));
+            }
+            await loadOrders();
+        });
+
+        // Show/hide cancel reason
+        document.getElementById('newStatus').addEventListener('change', function() {
+            const cancelGroup = document.getElementById('cancelReasonGroup');
+            cancelGroup.style.display = this.value === 'cancelled' ? 'block' : 'none';
+        });
+
+        async function loadOrders() {
+            const tbody = document.getElementById('ordersTable');
+            tbody.innerHTML = '<tr><td colspan="9" class="loading"><div class="loading-spinner"></div>Loading...</td></tr>';
+
+            try {
+                const params = {
+                    page: currentPage,
+                    limit: 20
+                };
+
+                const search = document.getElementById('searchInput').value;
+                const status = document.getElementById('statusFilter').value;
+                const fromDate = document.getElementById('fromDate').value;
+                const toDate = document.getElementById('toDate').value;
+
+                if (search) params.search = search;
+                if (status) params.status = status;
+                if (fromDate) params.from_date = fromDate;
+                if (toDate) params.to_date = toDate;
+
+                const queryString = new URLSearchParams(params).toString();
+                const response = await AdminAPI.call(`/orders?${queryString}`, 'GET');
+
+                if (response.success) {
+                    renderOrders(response.data.data);
+                    renderPagination(response.data.pagination);
+                } else {
+                    tbody.innerHTML = '<tr><td colspan="9" class="empty-state">Failed to load orders</td></tr>';
+                }
+            } catch (error) {
+                console.error('Failed to load orders:', error);
+                tbody.innerHTML = '<tr><td colspan="9" class="empty-state">Failed to load orders</td></tr>';
+            }
+        }
+
+        function renderOrders(orders) {
+            const tbody = document.getElementById('ordersTable');
+
+            if (orders.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="9" class="empty-state">
+                            <i class="fas fa-shopping-bag"></i>
+                            <h3>No orders found</h3>
+                            <p>Orders will appear here when customers place them</p>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = orders.map(order => `
+                <tr>
+                    <td><strong style="color: var(--primary);">${order.order_id}</strong></td>
+                    <td>
+                        ${order.customer_name || 'Guest'}
+                        <br><small style="color: var(--gray);">${order.customer_mobile || '-'}</small>
+                    </td>
+                    <td>${order.item_count} items</td>
+                    <td><strong>${AdminAPI.formatCurrency(order.total)}</strong></td>
+                    <td>
+                        <span style="text-transform: uppercase; font-size: 11px;">${order.payment_method}</span>
+                        <br>${AdminAPI.getStatusBadge(order.payment_status || 'pending')}
+                    </td>
+                    <td>
+                        <select class="status-select status-${order.status}" onchange="quickStatusChange(${order.id}, this.value)" data-order-id="${order.id}">
+                            <option value="pending" ${order.status === 'pending' ? 'selected' : ''}>Pending</option>
+                            <option value="confirmed" ${order.status === 'confirmed' ? 'selected' : ''}>Confirmed</option>
+                            <option value="preparing" ${order.status === 'preparing' ? 'selected' : ''}>Preparing</option>
+                            <option value="ready" ${order.status === 'ready' ? 'selected' : ''}>Ready</option>
+                            <option value="out_for_delivery" ${order.status === 'out_for_delivery' ? 'selected' : ''}>Out for Delivery</option>
+                            <option value="delivered" ${order.status === 'delivered' ? 'selected' : ''}>Delivered</option>
+                            <option value="cancelled" ${order.status === 'cancelled' ? 'selected' : ''}>Cancelled</option>
+                        </select>
+                    </td>
+                    <td>
+                        <span style="color: #6b7280;"><i class="fas fa-calendar"></i> ${formatOrderDate(order.created_at)}</span>
+                        <br><small style="color: var(--gray);"><i class="fas fa-clock"></i> ${formatOrderTime(order.created_at)}</small>
+                    </td>
+                    <td>
+                        ${order.delivery_date ? `<strong style="color: var(--primary);"><i class="fas fa-truck"></i> ${formatDeliveryDate(order.delivery_date)}</strong>` : '-'}
+                        ${order.delivery_time ? `<br><small style="color: var(--gray);"><i class="fas fa-clock"></i> ${order.delivery_time}</small>` : ''}
+                    </td>
+                    <td>
+                        <button class="action-btn view" onclick="viewOrder(${order.id})" title="View Details">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function renderPagination(pagination) {
+            const container = document.getElementById('pagination');
+            const { current_page, total_pages } = pagination;
+
+            if (total_pages <= 1) {
+                container.innerHTML = '';
+                return;
+            }
+
+            let html = `
+                <button ${current_page === 1 ? 'disabled' : ''} onclick="goToPage(${current_page - 1})">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+            `;
+
+            for (let i = 1; i <= total_pages; i++) {
+                if (i === 1 || i === total_pages || (i >= current_page - 2 && i <= current_page + 2)) {
+                    html += `<button class="${i === current_page ? 'active' : ''}" onclick="goToPage(${i})">${i}</button>`;
+                } else if (i === current_page - 3 || i === current_page + 3) {
+                    html += `<button disabled>...</button>`;
+                }
+            }
+
+            html += `
+                <button ${current_page === total_pages ? 'disabled' : ''} onclick="goToPage(${current_page + 1})">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            `;
+
+            container.innerHTML = html;
+        }
+
+        function goToPage(page) {
+            currentPage = page;
+            loadOrders();
+        }
+
+        const handleSearch = AdminAPI.debounce(function(event) {
+            currentPage = 1;
+            loadOrders();
+        }, 300);
+
+        function clearFilters() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('statusFilter').value = '';
+            document.getElementById('fromDate').value = '';
+            document.getElementById('toDate').value = '';
+            currentPage = 1;
+            loadOrders();
+        }
+
+        async function viewOrder(id) {
+            AdminAPI.openModal('orderModal');
+            const container = document.getElementById('orderDetails');
+            container.innerHTML = '<div class="loading"><div class="loading-spinner"></div>Loading...</div>';
+
+            try {
+                const response = await AdminAPI.call(`/orders/${id}`, 'GET');
+                if (response.success) {
+                    const order = response.data;
+                    container.innerHTML = `
+                        <div class="order-details-grid">
+                            <div class="order-details-section">
+                                <h4><i class="fas fa-receipt"></i> Order Information</h4>
+                                <p><strong>Order ID:</strong> <span style="color: var(--primary); font-weight: 700;">${order.order_id}</span></p>
+                                <p><strong>Order Date:</strong> ${AdminAPI.formatDateTime(order.created_at)}</p>
+                                <p><strong>Status:</strong> ${AdminAPI.getStatusBadge(order.status)}</p>
+                                <p><strong>Payment:</strong> <span style="text-transform: uppercase; font-weight: 600;">${order.payment_method}</span></p>
+                                <p><strong>Pay Status:</strong> ${AdminAPI.getStatusBadge(order.payment_status || 'pending')}</p>
+                            </div>
+                            <div class="order-details-section">
+                                <h4><i class="fas fa-user"></i> Customer Details</h4>
+                                <p><strong>Name:</strong> ${order.customer_name || order.shipping_name || 'Guest'}</p>
+                                <p><strong>Mobile:</strong> <a href="tel:${order.customer_mobile}" style="color: var(--primary); text-decoration: none;">${order.customer_mobile || order.shipping_mobile || '-'}</a></p>
+                                <p><strong>Email:</strong> ${order.customer_email || '-'}</p>
+                            </div>
+                        </div>
+
+                        <!-- Delivery Schedule Section -->
+                        <div class="order-details-section" style="margin-top: 20px; background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%); border-left: 4px solid #F59E0B;">
+                            <h4><i class="fas fa-truck" style="color: #F59E0B;"></i> Delivery Schedule</h4>
+                            <p style="margin: 0;">
+                                <strong><i class="fas fa-calendar-alt"></i> Date:</strong>
+                                <span style="color: var(--primary); font-weight: 700; font-size: 1.1em;">
+                                    ${order.delivery_date ? formatDeliveryDate(order.delivery_date) : 'Not specified'}
+                                </span>
+                            </p>
+                            <p style="margin: 8px 0 0 0;">
+                                <strong><i class="fas fa-clock"></i> Time Slot:</strong>
+                                <span style="color: var(--primary); font-weight: 700; font-size: 1.1em;">
+                                    ${order.delivery_time || 'Not specified'}
+                                </span>
+                            </p>
+                        </div>
+
+                        <div class="order-details-section" style="margin-top: 20px;">
+                            <h4><i class="fas fa-map-marker-alt"></i> Delivery Address</h4>
+                            <p style="margin: 0; line-height: 1.8;">
+                                ${order.customer_address || order.delivery_address || order.shipping_street || '-'}
+                                ${order.delivery_landmark || order.shipping_landmark ? `<br><span style="color: var(--gray);">Landmark: ${order.delivery_landmark || order.shipping_landmark}</span>` : ''}
+                                ${order.delivery_city || order.shipping_city ? `<br><strong>${order.delivery_city || order.shipping_city}</strong>` : ''} ${order.delivery_pincode || order.shipping_pincode || ''}
+                            </p>
+                        </div>
+
+                        <div style="margin-top: 24px;">
+                            <h4 style="margin-bottom: 16px; font-size: 16px; font-weight: 700; color: var(--dark); display: flex; align-items: center; gap: 10px;">
+                                <i class="fas fa-shopping-basket" style="color: var(--primary);"></i> Order Items
+                            </h4>
+                            <table class="data-table" style="border-radius: 12px; overflow: hidden;">
+                                <thead>
+                                    <tr>
+                                        <th>Product</th>
+                                        <th style="text-align: center;">Price</th>
+                                        <th style="text-align: center;">Qty</th>
+                                        <th style="text-align: right;">Subtotal</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${order.items.map(item => `
+                                        <tr>
+                                            <td>
+                                                <div style="display: flex; align-items: center; gap: 12px;">
+                                                    <img src="${AdminAPI.getAdminImagePath(item.product_image)}" alt="" style="width: 48px; height: 48px; object-fit: cover; border-radius: 10px; border: 2px solid var(--gray-lighter);" onerror="this.src='../../assets/logo.png'">
+                                                    <span style="font-weight: 600;">${item.product_name}</span>
+                                                </div>
+                                            </td>
+                                            <td style="text-align: center; color: var(--gray);">${AdminAPI.formatCurrency(item.price)}</td>
+                                            <td style="text-align: center;"><span style="background: var(--gray-lighter); padding: 4px 12px; border-radius: 6px; font-weight: 600;">${item.quantity}</span></td>
+                                            <td style="text-align: right; font-weight: 700;">${AdminAPI.formatCurrency(item.subtotal)}</td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div style="margin-top: 24px; background: linear-gradient(135deg, var(--gray-lighter) 0%, #e8ecf1 100%); padding: 20px; border-radius: 14px;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                                <span style="color: var(--gray);">Subtotal</span>
+                                <span style="font-weight: 600;">${AdminAPI.formatCurrency(order.subtotal)}</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                                <span style="color: var(--gray);">Delivery Charge</span>
+                                <span style="font-weight: 600;">${AdminAPI.formatCurrency(order.delivery_charge || 0)}</span>
+                            </div>
+                            ${order.packing_charge ? `
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                                <span style="color: var(--gray);">Packing Charge</span>
+                                <span style="font-weight: 600;">${AdminAPI.formatCurrency(order.packing_charge)}</span>
+                            </div>` : ''}
+                            ${order.discount ? `
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                                <span style="color: var(--success);">Discount</span>
+                                <span style="font-weight: 600; color: var(--success);">-${AdminAPI.formatCurrency(order.discount)}</span>
+                            </div>` : ''}
+                            <div style="display: flex; justify-content: space-between; padding-top: 12px; border-top: 2px solid var(--gray-light); margin-top: 12px;">
+                                <span style="font-size: 18px; font-weight: 700;">Total</span>
+                                <span style="font-size: 24px; font-weight: 800; color: var(--primary);">${AdminAPI.formatCurrency(order.total)}</span>
+                            </div>
+                        </div>
+
+                        ${order.notes ? `
+                        <div style="margin-top: 20px; padding: 16px; background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); border-radius: 12px; border-left: 4px solid var(--info);">
+                            <strong style="color: var(--info);"><i class="fas fa-sticky-note"></i> Notes:</strong>
+                            <p style="margin: 8px 0 0 0; color: var(--dark);">${order.notes}</p>
+                        </div>` : ''}
+                        ${order.cancelled_reason ? `
+                        <div style="margin-top: 20px; padding: 16px; background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%); border-radius: 12px; border-left: 4px solid var(--danger);">
+                            <strong style="color: var(--danger);"><i class="fas fa-times-circle"></i> Cancellation Reason:</strong>
+                            <p style="margin: 8px 0 0 0; color: var(--dark);">${order.cancelled_reason}</p>
+                        </div>` : ''}
+                    `;
+                } else {
+                    container.innerHTML = '<p>Failed to load order details</p>';
+                }
+            } catch (error) {
+                container.innerHTML = '<p>Failed to load order details</p>';
+            }
+        }
+
+        function openStatusModal(orderId, currentStatus) {
+            document.getElementById('updateOrderId').value = orderId;
+            document.getElementById('newStatus').value = currentStatus;
+            document.getElementById('cancelReasonGroup').style.display = 'none';
+            document.getElementById('cancelReason').value = '';
+            AdminAPI.openModal('statusModal');
+        }
+
+        async function updateOrderStatus() {
+            const orderId = document.getElementById('updateOrderId').value;
+            const newStatus = document.getElementById('newStatus').value;
+            const cancelReason = document.getElementById('cancelReason').value;
+
+            const data = {
+                id: orderId,
+                status: newStatus
+            };
+
+            if (newStatus === 'cancelled' && cancelReason) {
+                data.cancelled_reason = cancelReason;
+            }
+
+            try {
+                const response = await AdminAPI.call('/orders', 'PUT', data);
+                if (response.success) {
+                    AdminAPI.showToast('Order status updated', 'success');
+                    AdminAPI.closeModal('statusModal');
+                    loadOrders();
+                } else {
+                    AdminAPI.showToast(response.message || 'Failed to update status', 'error');
+                }
+            } catch (error) {
+                AdminAPI.showToast('Failed to update status', 'error');
+            }
+        }
+
+        // Quick status change directly from table dropdown
+        async function quickStatusChange(orderId, newStatus) {
+            const selectElement = document.querySelector(`select[data-order-id="${orderId}"]`);
+            const originalValue = selectElement.getAttribute('data-original-status') || selectElement.value;
+
+            // If cancelled, show reason modal instead
+            if (newStatus === 'cancelled') {
+                openStatusModal(orderId, newStatus);
+                // Reset dropdown to original value
+                selectElement.value = originalValue;
+                return;
+            }
+
+            // Show loading state
+            selectElement.disabled = true;
+            selectElement.style.opacity = '0.6';
+
+            try {
+                const response = await AdminAPI.call('/orders', 'PUT', {
+                    id: orderId,
+                    status: newStatus
+                });
+
+                if (response.success) {
+                    AdminAPI.showToast(`Order status updated to ${newStatus.replace('_', ' ')}`, 'success');
+                    // Update the select styling
+                    selectElement.className = `status-select status-${newStatus}`;
+                    selectElement.setAttribute('data-original-status', newStatus);
+                } else {
+                    AdminAPI.showToast(response.message || 'Failed to update status', 'error');
+                    // Revert on failure
+                    selectElement.value = originalValue;
+                }
+            } catch (error) {
+                AdminAPI.showToast('Failed to update status', 'error');
+                selectElement.value = originalValue;
+            } finally {
+                selectElement.disabled = false;
+                selectElement.style.opacity = '1';
+            }
+        }
+    </script>
+</body>
+</html>

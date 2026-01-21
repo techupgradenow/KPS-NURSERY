@@ -1,0 +1,1433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <title>Menu Card - SK Bakers Admin</title>
+    <meta name="robots" content="noindex, nofollow">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/webp" href="../../logo.webp">
+    <link rel="icon" type="image/png" href="../../assets/logo.png">
+
+    <!-- Theme Color -->
+    <meta name="theme-color" content="#1a3a5c">
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/admin.css?v=5.0">
+    <style>
+        /* Modern Menu Card Admin Styles */
+        .menu-header {
+            background: linear-gradient(135deg, #1a3a5c 0%, #0d2238 100%);
+            padding: 25px 30px;
+            border-radius: 16px;
+            margin-bottom: 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        .menu-header h2 {
+            color: white;
+            margin: 0;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .menu-header h2 i {
+            color: #f5a623;
+        }
+        .menu-header .stats {
+            display: flex;
+            gap: 25px;
+        }
+        .menu-header .stat {
+            text-align: center;
+        }
+        .menu-header .stat-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #f5a623;
+        }
+        .menu-header .stat-label {
+            font-size: 0.75rem;
+            color: rgba(255,255,255,0.7);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .menu-header .actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        /* Action Buttons */
+        .action-btn-large {
+            padding: 12px 20px;
+            border-radius: 10px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+            font-size: 0.9rem;
+        }
+        .action-btn-large.primary {
+            background: #22c55e;
+            color: white;
+        }
+        .action-btn-large.primary:hover {
+            background: #16a34a;
+        }
+        .action-btn-large.secondary {
+            background: #f5a623;
+            color: #1a3a5c;
+        }
+        .action-btn-large.secondary:hover {
+            background: #e09000;
+        }
+        .action-btn-large.outline {
+            background: transparent;
+            border: 2px solid rgba(255,255,255,0.5);
+            color: white;
+        }
+        .action-btn-large.outline:hover {
+            background: rgba(255,255,255,0.1);
+            border-color: white;
+        }
+
+        /* Steps Info */
+        .steps-info {
+            background: linear-gradient(135deg, #dbeafe 0%, #eff6ff 100%);
+            border: 1px solid #93c5fd;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+        .steps-info h3 {
+            color: #1e40af;
+            margin: 0 0 15px;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .steps-info .steps {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        .steps-info .step {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .steps-info .step-number {
+            width: 28px;
+            height: 28px;
+            background: #1e40af;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.85rem;
+        }
+        .steps-info .step-text {
+            color: #1e40af;
+            font-weight: 500;
+        }
+
+        /* Category Section */
+        .category-section {
+            background: white;
+            border-radius: 16px;
+            margin-bottom: 20px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        .category-header {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            padding: 18px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .category-header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+        }
+        .category-header-left:hover h3 {
+            color: #f5a623;
+        }
+        .category-header h3 {
+            margin: 0;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #1a3a5c;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: color 0.2s;
+        }
+        .category-header h3 i {
+            color: #f5a623;
+            width: 28px;
+            font-size: 1.1rem;
+        }
+        .category-header .item-count {
+            background: #1a3a5c;
+            color: white;
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        .category-header .toggle-icon {
+            color: #888;
+            transition: transform 0.3s;
+            font-size: 1rem;
+        }
+        .category-header-actions {
+            display: flex;
+            gap: 8px;
+        }
+        .category-header-actions button {
+            padding: 8px 14px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+        .category-header-actions .add-btn {
+            background: #dcfce7;
+            color: #166534;
+        }
+        .category-header-actions .add-btn:hover {
+            background: #22c55e;
+            color: white;
+        }
+        .category-header-actions .edit-btn {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+        .category-header-actions .edit-btn:hover {
+            background: #3b82f6;
+            color: white;
+        }
+        .category-header-actions .delete-btn {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        .category-header-actions .delete-btn:hover {
+            background: #dc2626;
+            color: white;
+        }
+        .category-section.collapsed .category-header .toggle-icon {
+            transform: rotate(-90deg);
+        }
+        .category-section.collapsed .category-items {
+            display: none;
+        }
+
+        /* Category Items Grid */
+        .category-items {
+            padding: 15px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 12px;
+            background: #fafafa;
+        }
+
+        /* Menu Item Card */
+        .menu-item {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.2s;
+        }
+        .menu-item:hover {
+            border-color: #1a3a5c;
+            box-shadow: 0 2px 8px rgba(26,58,92,0.1);
+        }
+        .menu-item.non-veg {
+            border-left: 4px solid #dc3545;
+        }
+        .menu-item.veg {
+            border-left: 4px solid #22c55e;
+        }
+        .menu-item .item-info {
+            flex: 1;
+        }
+        .menu-item .item-name {
+            font-weight: 600;
+            color: #1a3a5c;
+            font-size: 0.95rem;
+            margin-bottom: 4px;
+        }
+        .menu-item .item-type {
+            font-size: 0.7rem;
+            padding: 2px 8px;
+            border-radius: 10px;
+            display: inline-block;
+        }
+        .menu-item .item-type.veg {
+            background: #dcfce7;
+            color: #166534;
+        }
+        .menu-item .item-type.non-veg {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        .menu-item .item-price {
+            text-align: right;
+            min-width: 80px;
+        }
+        .menu-item .price-value {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #f5a623;
+        }
+        .menu-item .price-secondary {
+            font-size: 0.8rem;
+            color: #888;
+        }
+        .menu-item .item-actions {
+            display: flex;
+            gap: 6px;
+        }
+        .menu-item .action-btn {
+            width: 34px;
+            height: 34px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+        .menu-item .action-btn.edit {
+            background: #dbeafe;
+            color: #2563eb;
+        }
+        .menu-item .action-btn.edit:hover {
+            background: #2563eb;
+            color: white;
+        }
+        .menu-item .action-btn.delete {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+        .menu-item .action-btn.delete:hover {
+            background: #dc2626;
+            color: white;
+        }
+
+        /* Empty Category */
+        .empty-category {
+            padding: 30px;
+            text-align: center;
+            color: #888;
+        }
+        .empty-category i {
+            font-size: 2rem;
+            color: #d1d5db;
+            margin-bottom: 10px;
+        }
+        .empty-category p {
+            margin: 0 0 15px;
+        }
+        .empty-category button {
+            background: #22c55e;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .empty-category button:hover {
+            background: #16a34a;
+        }
+
+        /* Add First Category */
+        .add-first-category {
+            background: white;
+            border: 2px dashed #d1d5db;
+            border-radius: 16px;
+            padding: 50px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .add-first-category:hover {
+            border-color: #f5a623;
+            background: #fffbeb;
+        }
+        .add-first-category i {
+            font-size: 3rem;
+            color: #f5a623;
+            margin-bottom: 15px;
+        }
+        .add-first-category h3 {
+            margin: 0 0 8px;
+            color: #1a3a5c;
+        }
+        .add-first-category p {
+            margin: 0;
+            color: #888;
+        }
+
+        /* Search & Filter */
+        .filter-bar {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .search-input {
+            flex: 1;
+            min-width: 250px;
+            padding: 12px 16px 12px 45px;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            background: white url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%239ca3af' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E") no-repeat 14px center;
+        }
+        .search-input:focus {
+            border-color: #1a3a5c;
+            outline: none;
+        }
+        .filter-select {
+            padding: 12px 35px 12px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            background: white;
+            cursor: pointer;
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+        .modal-overlay.active {
+            display: flex;
+        }
+        .modal {
+            background: white;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .modal-header {
+            padding: 20px 25px;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .modal-header h3 {
+            margin: 0;
+            font-size: 1.2rem;
+            color: #1a3a5c;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .modal-header h3 i {
+            color: #f5a623;
+        }
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #888;
+            cursor: pointer;
+        }
+        .modal-body {
+            padding: 25px;
+        }
+        .modal-footer {
+            padding: 15px 25px;
+            border-top: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        /* Form Styles */
+        .form-group {
+            margin-bottom: 18px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+            color: #374151;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .form-control {
+            width: 100%;
+            padding: 12px 14px;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            transition: border-color 0.2s;
+        }
+        .form-control:focus {
+            border-color: #1a3a5c;
+            outline: none;
+        }
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        .form-hint {
+            font-size: 0.75rem;
+            color: #888;
+            margin-top: 4px;
+        }
+
+        /* Type Selector */
+        .type-selector {
+            display: flex;
+            gap: 10px;
+        }
+        .type-option {
+            flex: 1;
+            padding: 15px 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .type-option:hover {
+            border-color: #1a3a5c;
+        }
+        .type-option.active.veg {
+            border-color: #22c55e;
+            background: #f0fdf4;
+        }
+        .type-option.active.non-veg {
+            border-color: #dc3545;
+            background: #fef2f2;
+        }
+        .type-option i {
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+            display: block;
+        }
+        .type-option.veg i { color: #22c55e; }
+        .type-option.non-veg i { color: #dc3545; }
+        .type-option span {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        /* Icon Selector */
+        .icon-selector {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .icon-option {
+            width: 45px;
+            height: 45px;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.2rem;
+            color: #666;
+            transition: all 0.2s;
+        }
+        .icon-option:hover {
+            border-color: #1a3a5c;
+            color: #1a3a5c;
+        }
+        .icon-option.active {
+            border-color: #f5a623;
+            background: #fffbeb;
+            color: #f5a623;
+        }
+
+        /* Import Status */
+        .import-status {
+            background: linear-gradient(135deg, #fef3c7 0%, #fef9c3 100%);
+            border: 1px solid #f59e0b;
+            border-radius: 12px;
+            padding: 18px 20px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .import-status i {
+            color: #f59e0b;
+            font-size: 1.5rem;
+        }
+        .import-status .content {
+            flex: 1;
+        }
+        .import-status h4 {
+            margin: 0 0 4px;
+            color: #92400e;
+        }
+        .import-status p {
+            margin: 0;
+            color: #a16207;
+            font-size: 0.9rem;
+        }
+        .import-status .import-btn {
+            background: #f59e0b;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .import-status .import-btn:hover {
+            background: #d97706;
+        }
+
+        /* Loading */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255,255,255,0.9);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .loading-overlay.active {
+            display: flex;
+        }
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid #e5e7eb;
+            border-top-color: #1a3a5c;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        .loading-overlay p {
+            color: #1a3a5c;
+            font-weight: 500;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .menu-header {
+                flex-direction: column;
+                text-align: center;
+            }
+            .menu-header .stats {
+                justify-content: center;
+            }
+            .menu-header .actions {
+                justify-content: center;
+            }
+            .category-items {
+                grid-template-columns: 1fr;
+            }
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            .steps-info .steps {
+                flex-direction: column;
+                gap: 10px;
+            }
+            .category-header {
+                flex-direction: column;
+                gap: 12px;
+            }
+            .category-header-actions {
+                width: 100%;
+                justify-content: flex-end;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-layout">
+        <!-- Mobile Sidebar Overlay -->
+        <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <img src="../../logo.webp" alt="SK Bakers" onerror="this.src='../../assets/logo.png'">
+                <h2>SK Bakers</h2>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="index.html" class="nav-item">
+                    <i class="fas fa-th-large"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="orders.html" class="nav-item">
+                    <i class="fas fa-shopping-bag"></i>
+                    <span>Orders</span>
+                </a>
+                <a href="products.html" class="nav-item">
+                    <i class="fas fa-box"></i>
+                    <span>Products</span>
+                </a>
+                <a href="menu.html" class="nav-item active">
+                    <i class="fas fa-utensils"></i>
+                    <span>Menu Card</span>
+                </a>
+                <a href="categories.html" class="nav-item">
+                    <i class="fas fa-folder"></i>
+                    <span>Categories</span>
+                </a>
+                <a href="customers.html" class="nav-item">
+                    <i class="fas fa-users"></i>
+                    <span>Customers</span>
+                </a>
+                <div class="nav-divider"></div>
+                <a href="banners.html" class="nav-item">
+                    <i class="fas fa-images"></i>
+                    <span>Banners</span>
+                </a>
+                <a href="popups.html" class="nav-item">
+                    <i class="fas fa-bullhorn"></i>
+                    <span>Offer Popups</span>
+                </a>
+                <div class="nav-divider"></div>
+                <a href="#" class="nav-item" onclick="AdminAPI.logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="admin-header">
+                <div class="header-left">
+                    <button class="toggle-sidebar">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <h1 class="page-title">Menu Card</h1>
+                </div>
+                <div class="header-right">
+                    <a href="../../pages/menu.html" target="_blank" class="btn btn-outline btn-sm">
+                        <i class="fas fa-external-link-alt"></i> View Customer Menu
+                    </a>
+                </div>
+            </header>
+
+            <div class="content-area">
+                <!-- Import Status (shown if no items) -->
+                <div class="import-status" id="importStatus" style="display: none;">
+                    <i class="fas fa-lightbulb"></i>
+                    <div class="content">
+                        <h4>Quick Start!</h4>
+                        <p>Import all menu items from your existing menu card with one click.</p>
+                    </div>
+                    <button class="import-btn" onclick="importMenuData()">
+                        <i class="fas fa-magic"></i> Import All Items
+                    </button>
+                </div>
+
+                <!-- Menu Header -->
+                <div class="menu-header">
+                    <h2><i class="fas fa-utensils"></i> SK Bakers Menu</h2>
+                    <div class="stats">
+                        <div class="stat">
+                            <div class="stat-value" id="totalCategories">0</div>
+                            <div class="stat-label">Categories</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value" id="totalItems">0</div>
+                            <div class="stat-label">Items</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value" id="vegItems">0</div>
+                            <div class="stat-label">Veg</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value" id="nonVegItems">0</div>
+                            <div class="stat-label">Non-Veg</div>
+                        </div>
+                    </div>
+                    <div class="actions">
+                        <button class="action-btn-large secondary" onclick="openCategoryModal()">
+                            <i class="fas fa-folder-plus"></i> Add Category
+                        </button>
+                        <button class="action-btn-large primary" onclick="openItemModal()">
+                            <i class="fas fa-plus"></i> Add Item
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Steps Info -->
+                <div class="steps-info" id="stepsInfo">
+                    <h3><i class="fas fa-info-circle"></i> How to Create Menu</h3>
+                    <div class="steps">
+                        <div class="step">
+                            <span class="step-number">1</span>
+                            <span class="step-text">Create Category (e.g., Pizza, Burgers)</span>
+                        </div>
+                        <div class="step">
+                            <span class="step-number">2</span>
+                            <span class="step-text">Add Items under each Category</span>
+                        </div>
+                        <div class="step">
+                            <span class="step-number">3</span>
+                            <span class="step-text">Set Prices & Type (Veg/Non-Veg)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Filter Bar -->
+                <div class="filter-bar">
+                    <input type="text" class="search-input" id="searchInput" placeholder="Search menu items..." oninput="filterItems()">
+                    <select class="filter-select" id="typeFilter" onchange="filterItems()">
+                        <option value="">All Types</option>
+                        <option value="veg">Veg Only</option>
+                        <option value="non-veg">Non-Veg Only</option>
+                    </select>
+                </div>
+
+                <!-- Menu Categories Container -->
+                <div id="menuContainer">
+                    <!-- Categories will be loaded here -->
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Add/Edit Category Modal -->
+    <div class="modal-overlay" id="categoryModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3><i class="fas fa-folder-plus"></i> <span id="categoryModalTitle">Add Category</span></h3>
+                <button class="modal-close" onclick="closeModal('categoryModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="categoryForm">
+                    <input type="hidden" id="categoryId">
+
+                    <div class="form-group">
+                        <label>Category Name *</label>
+                        <input type="text" class="form-control" id="categoryName" placeholder="e.g., Pizza, Burgers, Milkshakes" required>
+                        <div class="form-hint">This will appear as a section header in the menu</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Icon *</label>
+                        <div class="icon-selector" id="iconSelector">
+                            <div class="icon-option active" data-icon="fas fa-pizza-slice"><i class="fas fa-pizza-slice"></i></div>
+                            <div class="icon-option" data-icon="fas fa-hamburger"><i class="fas fa-hamburger"></i></div>
+                            <div class="icon-option" data-icon="fas fa-bowl-hot"><i class="fas fa-bowl-hot"></i></div>
+                            <div class="icon-option" data-icon="fas fa-drumstick-bite"><i class="fas fa-drumstick-bite"></i></div>
+                            <div class="icon-option" data-icon="fas fa-bread-slice"><i class="fas fa-bread-slice"></i></div>
+                            <div class="icon-option" data-icon="fas fa-leaf"><i class="fas fa-leaf"></i></div>
+                            <div class="icon-option" data-icon="fas fa-egg"><i class="fas fa-egg"></i></div>
+                            <div class="icon-option" data-icon="fas fa-utensils"><i class="fas fa-utensils"></i></div>
+                            <div class="icon-option" data-icon="fas fa-blender"><i class="fas fa-blender"></i></div>
+                            <div class="icon-option" data-icon="fas fa-mug-hot"><i class="fas fa-mug-hot"></i></div>
+                            <div class="icon-option" data-icon="fas fa-ice-cream"><i class="fas fa-ice-cream"></i></div>
+                            <div class="icon-option" data-icon="fas fa-cookie-bite"><i class="fas fa-cookie-bite"></i></div>
+                            <div class="icon-option" data-icon="fas fa-glass-cheers"><i class="fas fa-glass-cheers"></i></div>
+                            <div class="icon-option" data-icon="fas fa-lemon"><i class="fas fa-lemon"></i></div>
+                            <div class="icon-option" data-icon="fas fa-cake-candles"><i class="fas fa-cake-candles"></i></div>
+                            <div class="icon-option" data-icon="fas fa-stroopwafel"><i class="fas fa-stroopwafel"></i></div>
+                        </div>
+                        <input type="hidden" id="categoryIcon" value="fas fa-pizza-slice">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Display Order</label>
+                        <input type="number" class="form-control" id="categoryOrder" value="0" min="0">
+                        <div class="form-hint">Lower numbers appear first (0, 1, 2, ...)</div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline" onclick="closeModal('categoryModal')">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="saveCategory()">
+                    <i class="fas fa-check"></i> Save Category
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add/Edit Item Modal -->
+    <div class="modal-overlay" id="itemModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3><i class="fas fa-plus-circle"></i> <span id="itemModalTitle">Add Menu Item</span></h3>
+                <button class="modal-close" onclick="closeModal('itemModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="itemForm">
+                    <input type="hidden" id="itemId">
+
+                    <div class="form-group">
+                        <label>Item Name *</label>
+                        <input type="text" class="form-control" id="itemName" placeholder="e.g., Margherita Pizza" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Category *</label>
+                        <select class="form-control" id="itemCategory" required>
+                            <option value="">Select Category</option>
+                        </select>
+                        <div class="form-hint">First create a category, then add items to it</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Type *</label>
+                        <div class="type-selector">
+                            <div class="type-option veg active" data-type="veg" onclick="selectType('veg')">
+                                <i class="fas fa-leaf"></i>
+                                <span>Veg</span>
+                            </div>
+                            <div class="type-option non-veg" data-type="non-veg" onclick="selectType('non-veg')">
+                                <i class="fas fa-drumstick-bite"></i>
+                                <span>Non-Veg</span>
+                            </div>
+                        </div>
+                        <input type="hidden" id="itemType" value="veg">
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Price (₹) *</label>
+                            <input type="number" class="form-control" id="itemPrice" placeholder="e.g., 220" required min="0">
+                        </div>
+                        <div class="form-group">
+                            <label>Price 2 (₹)</label>
+                            <input type="number" class="form-control" id="itemPrice2" placeholder="For Medium/Large" min="0">
+                            <div class="form-hint">Optional - for size variants</div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Description</label>
+                        <textarea class="form-control" id="itemDescription" rows="2" placeholder="Brief description (optional)"></textarea>
+                    </div>
+
+                    <div class="form-group" style="display: flex; align-items: center; gap: 10px;">
+                        <input type="checkbox" id="itemSpecial" style="width: 20px; height: 20px;">
+                        <label for="itemSpecial" style="margin: 0; color: #f5a623; font-weight: 500;">
+                            <i class="fas fa-star"></i> Mark as Special/Premium Item
+                        </label>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline" onclick="closeModal('itemModal')">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="saveItem()">
+                    <i class="fas fa-check"></i> Save Item
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner"></div>
+        <p>Loading...</p>
+    </div>
+
+    <script src="js/admin.js"></script>
+    <script>
+        // Data
+        let menuItems = [];
+        let categories = [];
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', async function() {
+            setupIconSelector();
+            await loadCategories();
+            await loadMenuItems();
+        });
+
+        // Setup icon selector
+        function setupIconSelector() {
+            document.querySelectorAll('.icon-option').forEach(opt => {
+                opt.addEventListener('click', function() {
+                    document.querySelectorAll('.icon-option').forEach(o => o.classList.remove('active'));
+                    this.classList.add('active');
+                    document.getElementById('categoryIcon').value = this.dataset.icon;
+                });
+            });
+        }
+
+        // Load categories from API
+        async function loadCategories() {
+            try {
+                const response = await AdminAPI.call('/menu-categories', 'GET');
+                if (response.success && response.data) {
+                    categories = response.data;
+                }
+            } catch (error) {
+                console.error('Failed to load categories:', error);
+                categories = [];
+            }
+            populateCategoryDropdown();
+        }
+
+        // Load menu items from API
+        async function loadMenuItems() {
+            try {
+                const response = await AdminAPI.call('/menu-items', 'GET');
+                if (response.success && response.data) {
+                    menuItems = response.data;
+                }
+            } catch (error) {
+                console.error('Failed to load menu items:', error);
+                menuItems = [];
+            }
+
+            // Show import status if no items and no categories
+            if (menuItems.length === 0 && categories.length === 0) {
+                document.getElementById('importStatus').style.display = 'flex';
+                document.getElementById('stepsInfo').style.display = 'block';
+            } else {
+                document.getElementById('importStatus').style.display = 'none';
+                document.getElementById('stepsInfo').style.display = categories.length === 0 ? 'block' : 'none';
+            }
+
+            updateStats();
+            renderMenu();
+        }
+
+        // Import menu data
+        async function importMenuData() {
+            showLoading(true, 'Importing menu data...');
+            try {
+                const response = await fetch('../../backend/api/import-menu-data.php');
+                const result = await response.json();
+
+                if (result.success) {
+                    AdminAPI.showToast(`Imported ${result.data.categories_imported} categories and ${result.data.items_imported} items!`, 'success');
+                    await loadCategories();
+                    await loadMenuItems();
+                } else {
+                    AdminAPI.showToast('Import failed: ' + result.message, 'error');
+                }
+            } catch (error) {
+                AdminAPI.showToast('Import failed: ' + error.message, 'error');
+            }
+            showLoading(false);
+        }
+
+        // Populate category dropdown
+        function populateCategoryDropdown() {
+            const select = document.getElementById('itemCategory');
+            select.innerHTML = '<option value="">Select Category</option>';
+            categories.forEach(cat => {
+                select.innerHTML += `<option value="${cat.slug}">${cat.name}</option>`;
+            });
+        }
+
+        // Update stats
+        function updateStats() {
+            document.getElementById('totalCategories').textContent = categories.length;
+            document.getElementById('totalItems').textContent = menuItems.length;
+            document.getElementById('vegItems').textContent = menuItems.filter(i => i.type === 'veg').length;
+            document.getElementById('nonVegItems').textContent = menuItems.filter(i => i.type === 'non-veg').length;
+        }
+
+        // Filter items
+        function filterItems() {
+            renderMenu();
+        }
+
+        // Render menu
+        function renderMenu() {
+            const container = document.getElementById('menuContainer');
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const typeFilter = document.getElementById('typeFilter').value;
+
+            // If no categories, show add first category
+            if (categories.length === 0) {
+                container.innerHTML = `
+                    <div class="add-first-category" onclick="openCategoryModal()">
+                        <i class="fas fa-folder-plus"></i>
+                        <h3>Create Your First Category</h3>
+                        <p>Start by creating a category like "Pizza", "Burgers", or "Beverages"</p>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = '';
+
+            categories.forEach(cat => {
+                // Get items for this category
+                let items = menuItems.filter(item => item.category === cat.slug);
+
+                // Apply filters
+                if (searchTerm) {
+                    items = items.filter(i => i.name.toLowerCase().includes(searchTerm));
+                }
+                if (typeFilter) {
+                    items = items.filter(i => i.type === typeFilter);
+                }
+
+                html += `
+                    <div class="category-section" data-category="${cat.slug}">
+                        <div class="category-header">
+                            <div class="category-header-left" onclick="toggleCategory('${cat.slug}')">
+                                <h3><i class="${cat.icon || 'fas fa-utensils'}"></i> ${cat.name}</h3>
+                                <span class="item-count">${items.length} items</span>
+                                <i class="fas fa-chevron-down toggle-icon"></i>
+                            </div>
+                            <div class="category-header-actions">
+                                <button class="add-btn" onclick="openItemModal('${cat.slug}')">
+                                    <i class="fas fa-plus"></i> Add Item
+                                </button>
+                                <button class="edit-btn" onclick="editCategory(${cat.id})">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="delete-btn" onclick="deleteCategory(${cat.id})">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="category-items">
+                            ${items.length > 0 ? items.map(item => renderItem(item)).join('') : `
+                                <div class="empty-category">
+                                    <i class="fas fa-utensils"></i>
+                                    <p>No items in this category yet</p>
+                                    <button onclick="openItemModal('${cat.slug}')">
+                                        <i class="fas fa-plus"></i> Add First Item
+                                    </button>
+                                </div>
+                            `}
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        // Render single item
+        function renderItem(item) {
+            const priceHtml = item.price2
+                ? `<div class="price-value">₹${item.price}</div><div class="price-secondary">/ ₹${item.price2}</div>`
+                : `<div class="price-value">₹${item.price}</div>`;
+
+            return `
+                <div class="menu-item ${item.type}" data-id="${item.id}">
+                    <div class="item-info">
+                        <div class="item-name">
+                            ${item.name}
+                            ${item.is_special == 1 ? '<i class="fas fa-star" style="color: #f5a623; margin-left: 5px;"></i>' : ''}
+                        </div>
+                        <span class="item-type ${item.type}">${item.type === 'veg' ? 'Veg' : 'Non-Veg'}</span>
+                    </div>
+                    <div class="item-price">${priceHtml}</div>
+                    <div class="item-actions">
+                        <button class="action-btn edit" onclick="editItem(${item.id})" title="Edit">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="action-btn delete" onclick="deleteItem(${item.id})" title="Delete">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Toggle category
+        function toggleCategory(slug) {
+            const section = document.querySelector(`.category-section[data-category="${slug}"]`);
+            section.classList.toggle('collapsed');
+        }
+
+        // Select type
+        function selectType(type) {
+            document.querySelectorAll('.type-option').forEach(opt => opt.classList.remove('active'));
+            document.querySelector(`.type-option[data-type="${type}"]`).classList.add('active');
+            document.getElementById('itemType').value = type;
+        }
+
+        // Open category modal
+        function openCategoryModal(categoryId = null) {
+            document.getElementById('categoryForm').reset();
+            document.getElementById('categoryId').value = '';
+            document.getElementById('categoryIcon').value = 'fas fa-pizza-slice';
+
+            // Reset icon selector
+            document.querySelectorAll('.icon-option').forEach(o => o.classList.remove('active'));
+            document.querySelector('.icon-option[data-icon="fas fa-pizza-slice"]').classList.add('active');
+
+            if (categoryId) {
+                const cat = categories.find(c => c.id == categoryId);
+                if (cat) {
+                    document.getElementById('categoryModalTitle').textContent = 'Edit Category';
+                    document.getElementById('categoryId').value = cat.id;
+                    document.getElementById('categoryName').value = cat.name;
+                    document.getElementById('categoryOrder').value = cat.display_order || 0;
+                    document.getElementById('categoryIcon').value = cat.icon;
+
+                    // Set icon
+                    document.querySelectorAll('.icon-option').forEach(o => o.classList.remove('active'));
+                    const iconOpt = document.querySelector(`.icon-option[data-icon="${cat.icon}"]`);
+                    if (iconOpt) iconOpt.classList.add('active');
+                }
+            } else {
+                document.getElementById('categoryModalTitle').textContent = 'Add Category';
+            }
+
+            document.getElementById('categoryModal').classList.add('active');
+        }
+
+        // Edit category
+        function editCategory(id) {
+            openCategoryModal(id);
+        }
+
+        // Save category
+        async function saveCategory() {
+            const id = document.getElementById('categoryId').value;
+            const name = document.getElementById('categoryName').value.trim();
+            const icon = document.getElementById('categoryIcon').value;
+            const order = parseInt(document.getElementById('categoryOrder').value) || 0;
+
+            if (!name) {
+                AdminAPI.showToast('Please enter category name', 'error');
+                return;
+            }
+
+            const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+
+            showLoading(true);
+            try {
+                let response;
+                if (id) {
+                    response = await AdminAPI.call(`/menu-categories/${id}`, 'PUT', {
+                        name, slug, icon, display_order: order, is_active: 1
+                    });
+                } else {
+                    response = await AdminAPI.call('/menu-categories', 'POST', {
+                        name, slug, icon, display_order: order
+                    });
+                }
+
+                if (response.success) {
+                    AdminAPI.showToast(id ? 'Category updated!' : 'Category created!', 'success');
+                    closeModal('categoryModal');
+                    await loadCategories();
+                    await loadMenuItems();
+                } else {
+                    AdminAPI.showToast(response.message || 'Failed to save', 'error');
+                }
+            } catch (error) {
+                AdminAPI.showToast('Failed to save: ' + error.message, 'error');
+            }
+            showLoading(false);
+        }
+
+        // Delete category
+        async function deleteCategory(id) {
+            const cat = categories.find(c => c.id == id);
+            const itemCount = menuItems.filter(i => i.category === cat?.slug).length;
+
+            if (itemCount > 0) {
+                AdminAPI.showToast(`Cannot delete "${cat.name}" - it has ${itemCount} items. Delete items first.`, 'error');
+                return;
+            }
+
+            if (!confirm(`Delete category "${cat?.name}"?`)) return;
+
+            showLoading(true);
+            try {
+                const response = await AdminAPI.call(`/menu-categories/${id}`, 'DELETE');
+                if (response.success) {
+                    AdminAPI.showToast('Category deleted!', 'success');
+                    await loadCategories();
+                    await loadMenuItems();
+                } else {
+                    AdminAPI.showToast(response.message || 'Failed to delete', 'error');
+                }
+            } catch (error) {
+                AdminAPI.showToast('Failed to delete: ' + error.message, 'error');
+            }
+            showLoading(false);
+        }
+
+        // Open item modal
+        function openItemModal(categorySlug = '') {
+            document.getElementById('itemForm').reset();
+            document.getElementById('itemId').value = '';
+            document.getElementById('itemCategory').value = categorySlug;
+            document.getElementById('itemModalTitle').textContent = 'Add Menu Item';
+            selectType('veg');
+
+            // Check if categories exist
+            if (categories.length === 0) {
+                AdminAPI.showToast('Please create a category first!', 'error');
+                openCategoryModal();
+                return;
+            }
+
+            document.getElementById('itemModal').classList.add('active');
+        }
+
+        // Edit item
+        function editItem(id) {
+            const item = menuItems.find(i => i.id == id);
+            if (!item) return;
+
+            document.getElementById('itemModalTitle').textContent = 'Edit Menu Item';
+            document.getElementById('itemId').value = item.id;
+            document.getElementById('itemName').value = item.name;
+            document.getElementById('itemCategory').value = item.category;
+            document.getElementById('itemPrice').value = item.price;
+            document.getElementById('itemPrice2').value = item.price2 || '';
+            document.getElementById('itemDescription').value = item.description || '';
+            document.getElementById('itemSpecial').checked = item.is_special == 1;
+            selectType(item.type);
+
+            document.getElementById('itemModal').classList.add('active');
+        }
+
+        // Save item
+        async function saveItem() {
+            const id = document.getElementById('itemId').value;
+            const data = {
+                name: document.getElementById('itemName').value.trim(),
+                category: document.getElementById('itemCategory').value,
+                type: document.getElementById('itemType').value,
+                price: parseFloat(document.getElementById('itemPrice').value),
+                price2: document.getElementById('itemPrice2').value ? parseFloat(document.getElementById('itemPrice2').value) : null,
+                description: document.getElementById('itemDescription').value.trim(),
+                is_special: document.getElementById('itemSpecial').checked ? 1 : 0,
+                is_active: 1
+            };
+
+            if (!data.name || !data.category || !data.price) {
+                AdminAPI.showToast('Please fill all required fields', 'error');
+                return;
+            }
+
+            showLoading(true);
+            try {
+                let response;
+                if (id) {
+                    response = await AdminAPI.call(`/menu-items/${id}`, 'PUT', data);
+                } else {
+                    response = await AdminAPI.call('/menu-items', 'POST', data);
+                }
+
+                if (response.success) {
+                    AdminAPI.showToast(id ? 'Item updated!' : 'Item added!', 'success');
+                    closeModal('itemModal');
+                    await loadMenuItems();
+                } else {
+                    AdminAPI.showToast(response.message || 'Failed to save', 'error');
+                }
+            } catch (error) {
+                AdminAPI.showToast('Failed to save: ' + error.message, 'error');
+            }
+            showLoading(false);
+        }
+
+        // Delete item
+        async function deleteItem(id) {
+            const item = menuItems.find(i => i.id == id);
+            if (!confirm(`Delete "${item?.name}"?`)) return;
+
+            showLoading(true);
+            try {
+                const response = await AdminAPI.call(`/menu-items/${id}`, 'DELETE');
+                if (response.success) {
+                    AdminAPI.showToast('Item deleted!', 'success');
+                    await loadMenuItems();
+                } else {
+                    AdminAPI.showToast(response.message || 'Failed to delete', 'error');
+                }
+            } catch (error) {
+                AdminAPI.showToast('Failed to delete: ' + error.message, 'error');
+            }
+            showLoading(false);
+        }
+
+        // Close modal
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        // Show/hide loading
+        function showLoading(show, message = 'Loading...') {
+            const overlay = document.getElementById('loadingOverlay');
+            overlay.querySelector('p').textContent = message;
+            overlay.classList.toggle('active', show);
+        }
+
+        // Close modal on outside click
+        document.querySelectorAll('.modal-overlay').forEach(modal => {
+            modal.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    this.classList.remove('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

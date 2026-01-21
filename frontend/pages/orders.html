@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Primary SEO Meta Tags -->
+    <title>My Orders - KPS Nursery Kovilpatti | Track Your Cake Orders</title>
+    <meta name="title" content="My Orders - KPS Nursery Kovilpatti | Track Your Cake Orders">
+    <meta name="description" content="Track your orders at KPS Nursery Kovilpatti. View order status, delivery updates, and order history. Best cake shop in Kovilpatti for wedding cakes, birthday cakes & desserts.">
+    <meta name="keywords" content="KPS Nursery orders, track cake order kovilpatti, cake delivery status, order history kovilpatti, best cake shop kovilpatti">
+    <meta name="author" content="KPS Nursery Kovilpatti">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="language" content="English">
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://skbakers.in/orders">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://skbakers.in/orders">
+    <meta property="og:title" content="My Orders - KPS Nursery Kovilpatti">
+    <meta property="og:description" content="Track your orders at KPS Nursery. View order status and delivery updates.">
+    <meta property="og:image" content="https://skbakers.in/assets/og-image.jpg">
+    <meta property="og:site_name" content="KPS Nursery">
+    <meta property="og:locale" content="en_IN">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:url" content="https://skbakers.in/orders">
+    <meta name="twitter:title" content="My Orders - KPS Nursery Kovilpatti">
+    <meta name="twitter:description" content="Track your orders at KPS Nursery. View order status and delivery updates.">
+
+    <!-- Favicon & App Icons -->
+    <link rel="icon" type="image/webp" href="../logo.png">
+    <link rel="icon" type="image/png" href="../assets/logo.png">
+    <link rel="shortcut icon" type="image/png" href="../assets/logo.png">
+    <link rel="apple-touch-icon" href="../assets/logo.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="../assets/logo.png">
+    <link rel="manifest" href="../manifest.json">
+
+    <!-- Theme Color -->
+    <meta name="theme-color" content="#2E7D32">
+    <meta name="msapplication-TileColor" content="#2E7D32">
+
+    <!-- Mobile App Meta -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="KPS Nursery">
+    <meta name="application-name" content="KPS Nursery">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+    <!-- Preconnect for Performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <!-- Cache Prevention -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="../css/style.css?v=6.9">
+</head>
+<body>
+    <div class="app-container">
+        <div id="main-app" class="screen active">
+            <!-- Header -->
+            <header class="app-header">
+                <div class="header-top">
+                    <a href="home.html" class="header-action-btn">
+                        <i class="fas fa-arrow-left"></i>
+                    </a>
+                    <h2 style="color: white; font-weight: 600;">My Orders</h2>
+                    <button class="header-action-btn" id="filter-orders-btn">
+                        <i class="fas fa-filter"></i>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Main Content -->
+            <main class="app-main">
+                <!-- Orders Screen -->
+                <div id="orders-screen" class="screen active">
+                    <div id="orders-container">
+                        <!-- Orders will be loaded here -->
+                    </div>
+
+                    <!-- Empty Orders Message -->
+                    <div id="empty-orders-message" style="display: none; text-align: center; padding: 3rem 1.5rem;">
+                        <i class="fas fa-receipt" style="font-size: 4rem; color: var(--gray); margin-bottom: 1rem;"></i>
+                        <h3 style="color: var(--dark); margin-bottom: 0.5rem;">No Orders Yet</h3>
+                        <p style="color: var(--gray); margin-bottom: 2rem;">You haven't placed any orders. Start shopping now!</p>
+                        <a href="home.html" class="btn btn-primary">
+                            <i class="fas fa-shopping-bag"></i> Start Shopping
+                        </a>
+                    </div>
+                </div>
+            </main>
+
+            <!-- Bottom Navigation -->
+            <nav class="bottom-nav">
+                <a href="home.html" class="nav-item">
+                    <i class="fas fa-home"></i>
+                    <span>Home</span>
+                </a>
+                <a href="menu.html" class="nav-item">
+                    <i class="fas fa-utensils"></i>
+                    <span>Menu</span>
+                </a>
+                <a href="cart.html" class="nav-item">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span>Cart</span>
+                </a>
+                <a href="orders.html" class="nav-item active">
+                    <i class="fas fa-receipt"></i>
+                    <span>Orders</span>
+                </a>
+            </nav>
+        </div>
+    </div>
+
+    <!-- Order Detail Modal -->
+    <div class="modal" id="order-detail-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Order Details</h3>
+                <button class="close-modal" id="close-order-detail">&times;</button>
+            </div>
+            <div class="modal-body" id="order-detail-content">
+                <!-- Order details will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loading-overlay">
+        <div class="loading-spinner"></div>
+    </div>
+
+    <!-- Toast Notifications Container -->
+    <div id="toast-container"></div>
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- Common Utilities -->
+    <script src="../js/common.js"></script>
+
+    <!-- Orders JS -->
+    <script src="../js/orders.js"></script>
+</body>
+</html>

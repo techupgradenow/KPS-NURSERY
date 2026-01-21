@@ -1,0 +1,18 @@
+[
+    {
+        "id": 1,
+        "title": "Welcome Offer",
+        "caption": "Get 20% off on first order",
+        "image": "..\/images\/banner1.jpg",
+        "redirect_type": "none",
+        "redirect_url": null,
+        "redirect_product_id": null,
+        "redirect_category_id": null,
+        "display_order": 1,
+        "is_active": 1,
+        "start_date": null,
+        "end_date": null,
+        "created_by": 1,
+        "created_at": "2026-01-09 19:55:35"
+    }
+]
