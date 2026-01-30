@@ -97,10 +97,12 @@ $path = parse_url($uri, PHP_URL_PATH);
 // Local: /kps-nursery/backend/api/index.php/admin/...
 // Production: /backend/api/index.php/admin/...
 $basePaths = [
-    '/kps-nursery/backend/api/index.php',       // Local XAMPP KPS Nursery
+    '/KPS-NURSERY/backend/api/index.php',       // Local XAMPP KPS Nursery (uppercase)
+    '/kps-nursery/backend/api/index.php',       // Local XAMPP KPS Nursery (lowercase)
     '/chicken-shop-app/backend/api/index.php',  // Local XAMPP (legacy)
     '/backend/api/index.php',                    // Production
-    '/kps-nursery/backend/api',                  // Local without index.php
+    '/KPS-NURSERY/backend/api',                  // Local without index.php (uppercase)
+    '/kps-nursery/backend/api',                  // Local without index.php (lowercase)
     '/chicken-shop-app/backend/api',             // Local without index.php (legacy)
     '/backend/api'                               // Production without index.php
 ];
@@ -933,6 +935,57 @@ if (preg_match('#^/admin/banners(?:/(\d+))?$#', $path, $matches)) {
     }
 }
 
+// === PUBLIC COMBO OFFERS (for home page) ===
+if ($path === '/combo-offers' && $method === 'GET') {
+    // Single combo by ID
+    if (isset($_GET['id'])) {
+        $stmt = $pdo->prepare("SELECT * FROM combo_offers WHERE id = ? AND status = 'active'");
+        $stmt->execute([$_GET['id']]);
+        $combo = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($combo) {
+            $pids = json_decode($combo['product_ids'], true) ?: [];
+            $combo['product_ids'] = $pids;
+            $combo['products'] = [];
+            if (!empty($pids)) {
+                $placeholders = implode(',', array_fill(0, count($pids), '?'));
+                $pstmt = $pdo->prepare("SELECT id, name, price, image FROM products WHERE id IN ($placeholders)");
+                $pstmt->execute($pids);
+                $combo['products'] = $pstmt->fetchAll(PDO::FETCH_ASSOC);
+            }
+        }
+
+        respond(['success' => true, 'data' => $combo ?: null]);
+    }
+
+    // List all active combos for homepage
+    $stmt = $pdo->query("
+        SELECT id, title, slug, description, image, product_ids, original_price, offer_price, discount_percent
+        FROM combo_offers
+        WHERE status = 'active'
+        AND show_on_homepage = 1
+        AND (start_date IS NULL OR start_date <= CURDATE())
+        AND (end_date IS NULL OR end_date >= CURDATE())
+        ORDER BY display_order ASC, id DESC
+    ");
+    $combos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    // Parse product_ids and fetch product names
+    foreach ($combos as &$combo) {
+        $pids = json_decode($combo['product_ids'], true) ?: [];
+        $combo['product_ids'] = $pids;
+        $combo['products'] = [];
+        if (!empty($pids)) {
+            $placeholders = implode(',', array_fill(0, count($pids), '?'));
+            $pstmt = $pdo->prepare("SELECT id, name, price, image FROM products WHERE id IN ($placeholders)");
+            $pstmt->execute($pids);
+            $combo['products'] = $pstmt->fetchAll(PDO::FETCH_ASSOC);
+        }
+    }
+
+    respond(['success' => true, 'data' => $combos]);
+}
+
 // === PUBLIC POPUPS (for home page) ===
 if ($path === '/popups' && $method === 'GET') {
     // Public endpoint - returns only active popups
@@ -1313,7 +1366,7 @@ if (preg_match('#^/admin/upload(?:/(\w+))?#', $path, $uploadMatches)) {
 
         // Detect environment and set appropriate upload directory
         $serverName = $_SERVER['SERVER_NAME'] ?? 'localhost';
-        $isHostinger = strpos($serverName, 'skbakers.in') !== false ||
+        $isHostinger = strpos($serverName, 'kpsnursery.in') !== false ||
                        strpos($serverName, 'hostinger') !== false;
 
         if ($isHostinger) {

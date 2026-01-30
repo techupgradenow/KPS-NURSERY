@@ -74,7 +74,7 @@ try {
         $stats['active_banners'] = $stmt->fetch(PDO::FETCH_ASSOC)['count'];
 
         // Active Offers/Popups
-        $stmt = $db->query("SELECT COUNT(*) as count FROM offer_popups WHERE is_active = 1");
+        $stmt = $db->query("SELECT COUNT(*) as count FROM popups WHERE is_active = 1");
         $stats['active_offers'] = $stmt->fetch(PDO::FETCH_ASSOC)['count'];
 
         // Low Stock Products (stock < 10)

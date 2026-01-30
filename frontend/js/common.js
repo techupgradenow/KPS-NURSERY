@@ -16,8 +16,8 @@ const isLocalhost = hostname === 'localhost' ||
 
 // Production domains (add all production domains here)
 const PRODUCTION_DOMAINS = [
-    'skbakers.upgradenow.in',
-    'www.skbakers.upgradenow.in'
+    'kpsnursery.upgradenow.in',
+    'www.kpsnursery.upgradenow.in'
 ];
 
 // Check if current hostname is a production domain
@@ -39,6 +39,7 @@ const API_ENDPOINTS = {
     payment: API_BASE + 'payment.php',
     banners: API_BASE + 'index.php/banners',
     popups: API_BASE + 'index.php/popups',
+    comboOffers: API_BASE + 'index.php/combo-offers',
     reviews: API_BASE + 'index.php/reviews'
 };
 
@@ -150,18 +151,18 @@ const AppState = {
 
     // Remove item from cart
     removeFromCart: function(productId) {
-        const id = parseInt(productId);
-        this.cart = this.cart.filter(item => parseInt(item.id) != id);
+        const idStr = String(productId);
+        this.cart = this.cart.filter(item => String(item.id) !== idStr);
         this.saveCart();
     },
 
     // Update item quantity
     updateQuantity: function(productId, quantity) {
-        const id = parseInt(productId);
-        const itemIndex = this.cart.findIndex(item => parseInt(item.id) == id);
+        const idStr = String(productId);
+        const itemIndex = this.cart.findIndex(item => String(item.id) === idStr);
         if (itemIndex >= 0) {
             if (quantity <= 0) {
-                this.removeFromCart(id);
+                this.removeFromCart(productId);
             } else {
                 this.cart[itemIndex].quantity = quantity;
                 this.saveCart();

@@ -1,6 +1,6 @@
 /**
  * Admin Panel JavaScript
- * SK Bakers Admin Panel
+ * KPS Nursery Admin Panel
  */
 
 // Environment Detection
@@ -12,32 +12,43 @@ const isLocalhost = adminHostname === 'localhost' ||
 
 // Production domains
 const ADMIN_PRODUCTION_DOMAINS = [
-    'skbakers.in',
-    'www.skbakers.in',
-    'plum-grouse-536264.hostingersite.com'
+    'kpsnursery.com',
+    'www.kpsnursery.com'
 ];
 
 // Check if current hostname is a production domain
 const isAdminProduction = ADMIN_PRODUCTION_DOMAINS.some(domain => adminHostname.includes(domain));
 
+// ============================================
+// FEATURE FLAGS - Toggle features on/off
+// Set to true to enable, false to disable
+// ============================================
+const FEATURE_FLAGS = {
+    ENABLE_MENU_CARD: false,      // Menu Card feature (disabled for now)
+    ENABLE_BANNERS: true,         // Banner management
+    ENABLE_POPUPS: true,          // Popup/Offer management
+    ENABLE_CUSTOMERS: true,       // Customer management
+    ENABLE_COMBO_OFFERS: true,    // Combo Offers management
+};
+
 // Configuration - Auto-detect environment
 const CONFIG = {
     // API Base URL changes based on environment
     API_BASE: isLocalhost
-        ? 'http://localhost/chicken-shop-app/backend/api/index.php/admin'
-        : '/backend/api/index.php/admin',
+        ? 'http://localhost/KPS-NURSERY/backend/admin-api'
+        : '/backend/admin-api',
     // Upload endpoint (separate for clarity)
     UPLOAD_BASE: isLocalhost
-        ? 'http://localhost/chicken-shop-app/backend/api/index.php/admin'
-        : '/backend/api/index.php/admin',
+        ? 'http://localhost/KPS-NURSERY/backend/admin-api'
+        : '/backend/admin-api',
     SESSION_KEY: 'admin_session',
     ADMIN_KEY: 'admin_data'
 };
 
 // Log environment for debugging
-console.log(`[SK Bakers Admin] Environment: ${isLocalhost ? 'LOCAL' : 'PRODUCTION'}`);
-console.log(`[SK Bakers Admin] Hostname: ${adminHostname}`);
-console.log(`[SK Bakers Admin] API Base: ${CONFIG.API_BASE}`);
+console.log(`[KPS Nursery Admin] Environment: ${isLocalhost ? 'LOCAL' : 'PRODUCTION'}`);
+console.log(`[KPS Nursery Admin] Hostname: ${adminHostname}`);
+console.log(`[KPS Nursery Admin] API Base: ${CONFIG.API_BASE}`);
 
 // State
 const AdminState = {
@@ -48,6 +59,9 @@ const AdminState = {
 
 // Initialize
 document.addEventListener('DOMContentLoaded', function() {
+    // Apply feature flags first (before auth check to handle redirects)
+    applyFeatureFlags();
+
     // Check authentication
     const session = localStorage.getItem(CONFIG.SESSION_KEY);
     const admin = localStorage.getItem(CONFIG.ADMIN_KEY);
@@ -68,20 +82,98 @@ document.addEventListener('DOMContentLoaded', function() {
     initModals();
 });
 
+/**
+ * Apply feature flags - hide/show features based on flags
+ * This runs on every page load to enforce feature visibility
+ */
+function applyFeatureFlags() {
+    const currentPage = window.location.pathname;
+
+    // ===== MENU CARD FEATURE =====
+    if (!FEATURE_FLAGS.ENABLE_MENU_CARD) {
+        // Hide Menu Card nav item from sidebar
+        document.querySelectorAll('a.nav-item[href="menu.html"]').forEach(el => {
+            el.style.display = 'none';
+        });
+
+        // Redirect if user tries to access menu.html directly
+        if (currentPage.includes('menu.html')) {
+            console.warn('[Feature Flag] Menu Card is disabled. Redirecting to dashboard.');
+            window.location.href = 'index.html';
+            return;
+        }
+    }
+
+    // ===== BANNERS FEATURE =====
+    if (!FEATURE_FLAGS.ENABLE_BANNERS) {
+        document.querySelectorAll('a.nav-item[href="banners.html"]').forEach(el => {
+            el.style.display = 'none';
+        });
+        if (currentPage.includes('banners.html')) {
+            window.location.href = 'index.html';
+            return;
+        }
+    }
+
+    // ===== POPUPS FEATURE =====
+    if (!FEATURE_FLAGS.ENABLE_POPUPS) {
+        document.querySelectorAll('a.nav-item[href="popups.html"]').forEach(el => {
+            el.style.display = 'none';
+        });
+        if (currentPage.includes('popups.html')) {
+            window.location.href = 'index.html';
+            return;
+        }
+    }
+
+    // ===== CUSTOMERS FEATURE =====
+    if (!FEATURE_FLAGS.ENABLE_CUSTOMERS) {
+        document.querySelectorAll('a.nav-item[href="customers.html"]').forEach(el => {
+            el.style.display = 'none';
+        });
+        if (currentPage.includes('customers.html')) {
+            window.location.href = 'index.html';
+            return;
+        }
+    }
+
+    // ===== COMBO OFFERS FEATURE =====
+    if (!FEATURE_FLAGS.ENABLE_COMBO_OFFERS) {
+        document.querySelectorAll('a.nav-item[href="combo-offers.html"]').forEach(el => {
+            el.style.display = 'none';
+        });
+        if (currentPage.includes('combo-offers.html')) {
+            window.location.href = 'index.html';
+            return;
+        }
+    }
+
+    console.log('[Feature Flags] Applied:', FEATURE_FLAGS);
+}
+
 // Session verification
 async function verifySession() {
     try {
-        const response = await apiCall('/auth/verify', 'POST');
+        console.log('[Session] Verifying session token:', AdminState.sessionToken ? AdminState.sessionToken.substring(0, 10) + '...' : 'null');
+
+        const response = await apiCall('/auth.php', 'POST', {
+            action: 'verify_session',
+            session_token: AdminState.sessionToken
+        });
+
+        console.log('[Session] Verification response:', response);
 
         if (response.success) {
             AdminState.admin = response.data.admin;
             localStorage.setItem(CONFIG.ADMIN_KEY, JSON.stringify(response.data.admin));
             updateAdminUI();
+            console.log('[Session] Session valid, UI updated');
         } else {
+            console.warn('[Session] Session invalid, logging out. Message:', response.message);
             logout();
         }
     } catch (error) {
-        console.error('Session verification failed:', error);
+        console.error('[Session] Verification error:', error);
         // Don't logout on network errors, just update UI
         updateAdminUI();
     }
@@ -91,10 +183,16 @@ async function verifySession() {
 async function login(username, password) {
     try {
         showLoading();
-        const response = await apiCall('/auth/login', 'POST', {
+        console.log('[Login] Attempting login for:', username);
+        console.log('[Login] API URL:', CONFIG.API_BASE + '/auth.php');
+
+        const response = await apiCall('/auth.php', 'POST', {
+            action: 'login',
             username: username,
             password: password
         });
+
+        console.log('[Login] Response:', response);
 
         if (response.success) {
             AdminState.sessionToken = response.data.session_token;
@@ -102,13 +200,16 @@ async function login(username, password) {
             localStorage.setItem(CONFIG.SESSION_KEY, response.data.session_token);
             localStorage.setItem(CONFIG.ADMIN_KEY, JSON.stringify(response.data.admin));
             showToast('Login successful!', 'success');
+            console.log('[Login] Success! Redirecting to index.html');
             setTimeout(() => {
                 window.location.href = 'index.html';
             }, 500);
         } else {
+            console.error('[Login] Failed:', response.message);
             showToast(response.message || 'Login failed', 'error');
         }
     } catch (error) {
+        console.error('[Login] Exception:', error);
         showToast('Login failed. Please try again.', 'error');
     } finally {
         hideLoading();
@@ -117,7 +218,10 @@ async function login(username, password) {
 
 // Logout function
 function logout() {
-    apiCall('/auth/logout', 'POST').catch(() => {});
+    apiCall('/auth.php', 'POST', {
+        action: 'logout',
+        session_token: AdminState.sessionToken
+    }).catch(() => {});
 
     localStorage.removeItem(CONFIG.SESSION_KEY);
     localStorage.removeItem(CONFIG.ADMIN_KEY);
@@ -152,10 +256,31 @@ async function apiCall(endpoint, method = 'GET', data = null) {
 
     const response = await fetch(url, options);
 
+    // Handle 401 Unauthorized - session expired
+    if (response.status === 401) {
+        console.warn('[API] Session expired or invalid (401). Redirecting to login.');
+        showToast('Session expired. Please login again.', 'warning');
+        setTimeout(() => {
+            localStorage.removeItem(CONFIG.SESSION_KEY);
+            localStorage.removeItem(CONFIG.ADMIN_KEY);
+            window.location.href = 'login.html';
+        }, 1500);
+        return { success: false, message: 'Session expired' };
+    }
+
     // Handle non-JSON responses gracefully
     const text = await response.text();
     try {
-        return JSON.parse(text);
+        const result = JSON.parse(text);
+
+        // Also check for 401 in JSON response
+        if (!result.success && (result.message?.includes('session') || result.message?.includes('Authentication'))) {
+            if (response.status === 401 || result.message?.toLowerCase().includes('expired')) {
+                console.warn('[API] Session issue detected:', result.message);
+            }
+        }
+
+        return result;
     } catch (e) {
         console.error('API returned non-JSON response:', text);
         return {
@@ -481,6 +606,18 @@ function initImageUploader(config) {
             isUploading = false;
             if (progress) progress.style.display = 'none';
 
+            // Handle 401 Unauthorized - session expired
+            if (xhr.status === 401) {
+                console.warn('[Upload] Session expired (401). Redirecting to login.');
+                showToast('Session expired. Please login again.', 'warning');
+                setTimeout(() => {
+                    localStorage.removeItem(CONFIG.SESSION_KEY);
+                    localStorage.removeItem(CONFIG.ADMIN_KEY);
+                    window.location.href = 'login.html';
+                }, 1500);
+                return;
+            }
+
             if (xhr.status === 200) {
                 try {
                     const response = JSON.parse(xhr.responseText);
@@ -494,10 +631,12 @@ function initImageUploader(config) {
                         showToast(response.message || 'Upload failed', 'error');
                     }
                 } catch (e) {
+                    console.error('Upload response parse error:', e, xhr.responseText);
                     showToast('Upload failed: Invalid response', 'error');
                 }
             } else {
-                showToast('Upload failed', 'error');
+                console.error('Upload failed with status:', xhr.status, xhr.responseText);
+                showToast('Upload failed: ' + (xhr.statusText || 'Unknown error'), 'error');
             }
         });
 
@@ -654,6 +793,11 @@ function getAdminImagePath(imagePath) {
     return normalizedPath;
 }
 
+// Helper function to check if a feature is enabled
+function isFeatureEnabled(featureName) {
+    return FEATURE_FLAGS[featureName] === true;
+}
+
 // Export functions for use in other scripts
 window.AdminAPI = {
     call: apiCall,
@@ -676,5 +820,8 @@ window.AdminAPI = {
     getImageUploadHTML,
     getImageUploaderConfig,
     // Image path helper
-    getAdminImagePath
+    getAdminImagePath,
+    // Feature flags
+    featureFlags: FEATURE_FLAGS,
+    isFeatureEnabled
 };

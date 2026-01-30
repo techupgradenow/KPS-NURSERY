@@ -2,13 +2,13 @@
     {
         "id": 1,
         "username": "admin",
-        "email": "admin@skbakers.com",
-        "password": "$2y$10$7gXIWMWezZsp9WZ0bCgcb.BkQgfkekQeU0lvCdcs4tBEf5kug39IG",
+        "email": "admin@kpsnursery.com",
+        "password": "$2y$10$LF4VPJDHDaOhgHSkMlAiPuXjkFV.FMSgkrb55VZaHC55j88S.X4oe",
         "name": "Super Admin",
         "role": "admin",
         "avatar": null,
         "is_active": 1,
-        "last_login": "2026-01-09 20:29:21",
-        "created_at": "2026-01-09 19:54:37"
+        "last_login": null,
+        "created_at": "2026-01-22 00:00:00"
     }
 ]

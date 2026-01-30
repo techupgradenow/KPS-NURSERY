@@ -2,7 +2,7 @@
 /**
  * Admin Orders API
  * Order management and status updates
- * SK Bakers Admin Panel
+ * KPS Nursery Admin Panel
  */
 
 require_once 'admin_middleware.php';
@@ -82,15 +82,12 @@ function handleGet() {
 
         // Single order with details
         if (isset($_GET['id'])) {
+            // Customer details are stored directly in orders table
             $stmt = $db->prepare("
                 SELECT o.*,
-                       u.name as customer_name, u.mobile as customer_mobile, u.email as customer_email,
-                       a.street as shipping_street, a.landmark as shipping_landmark,
-                       a.city as shipping_city, a.state as shipping_state, a.pincode as shipping_pincode,
-                       a.name as shipping_name, a.mobile as shipping_mobile, a.type as address_type
+                       u.name as user_name, u.mobile as user_mobile, u.email as user_email
                 FROM orders o
                 LEFT JOIN users u ON o.user_id = u.id
-                LEFT JOIN addresses a ON o.address_id = a.id
                 WHERE o.id = :id
             ");
             $stmt->execute([':id' => $_GET['id']]);

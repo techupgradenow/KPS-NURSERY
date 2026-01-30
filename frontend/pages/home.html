@@ -43,16 +43,16 @@
 
     <!-- Favicon & App Icons - Using existing logo -->
     <link rel="icon" type="image/webp" href="../logo.png">
-    <link rel="icon" type="image/png" href="../assets/logo.png">
-    <link rel="shortcut icon" type="image/png" href="../assets/logo.png">
-    <link rel="apple-touch-icon" href="../assets/logo.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="../assets/logo.png">
+    <link rel="icon" type="image/png" href="../assets/logo.png?v=2">
+    <link rel="shortcut icon" type="image/png" href="../assets/logo.png?v=2">
+    <link rel="apple-touch-icon" href="../assets/logo.png?v=2">
+    <link rel="apple-touch-icon" sizes="180x180" href="../assets/logo.png?v=2">
     <link rel="manifest" href="../manifest.json">
 
     <!-- Theme Color -->
     <meta name="theme-color" content="#2E7D32">
     <meta name="msapplication-TileColor" content="#2E7D32">
-    <meta name="msapplication-TileImage" content="../assets/logo.png">
+    <meta name="msapplication-TileImage" content="../assets/logo.png?v=2">
 
     <!-- Mobile App Meta -->
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -188,7 +188,7 @@
             <header class="app-header">
                 <div class="header-top">
                     <a href="home.html" class="logo">
-                        <img src="../logo.png" alt="KPS Nursery" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-block';">
+                        <img src="../logo.png?v=2" alt="KPS Nursery" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-block';">
                         <i class="fas fa-leaf" style="display: none;"></i>
                         <span>KPS Nursery</span>
                     </a>
@@ -231,6 +231,14 @@
                         <h2 class="section-title">Categories</h2>
                         <div class="category-grid" id="categories-container">
                             <!-- Categories will be loaded via JavaScript -->
+                        </div>
+                    </section>
+
+                    <!-- Combo Offers -->
+                    <section class="combo-offers-section" id="combo-offers-section" style="display:none;">
+                        <h2 class="section-title">Combo Offers</h2>
+                        <div class="combo-offers-grid" id="combo-offers-container">
+                            <!-- Combo offers loaded via JavaScript -->
                         </div>
                     </section>
 

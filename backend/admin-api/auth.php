@@ -6,6 +6,8 @@
  * Supports both database and file-based storage
  */
 
+date_default_timezone_set('Asia/Kolkata');
+
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: POST, OPTIONS');

@@ -32,14 +32,14 @@ body {
    CSS VARIABLES
    ======================================== */
 :root {
-    /* Maroon/Magenta & White Theme - SK Bakers */
-    --primary: #B03359;
-    --primary-dark: #8C2847;
-    --primary-light: #F8E0E8;
-    --secondary: #D64D7A;
-    --secondary-dark: #B03359;
-    --accent: #B03359;
-    --primary-gradient: linear-gradient(135deg, #B03359 0%, #C44A6D 50%, #8C2847 100%);
+    /* Green & White Theme - KPS Nursery */
+    --primary: #2E7D32;
+    --primary-dark: #1B5E20;
+    --primary-light: #E8F5E9;
+    --secondary: #4CAF50;
+    --secondary-dark: #388E3C;
+    --accent: #2E7D32;
+    --primary-gradient: linear-gradient(135deg, #2E7D32 0%, #43A047 50%, #1B5E20 100%);
     --success: #10B981;
     --success-light: #D1FAE5;
     --warning: #F59E0B;

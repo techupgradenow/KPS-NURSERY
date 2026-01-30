@@ -275,7 +275,30 @@ try {
             KEY is_default (is_default)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci",
 
-        // 16. Create payment_failures table
+        // 16. Create combo_offers table
+        "combo_offers" => "CREATE TABLE IF NOT EXISTS combo_offers (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            title VARCHAR(200) NOT NULL,
+            slug VARCHAR(220),
+            description TEXT,
+            image VARCHAR(500),
+            product_ids JSON NOT NULL,
+            original_price DECIMAL(10,2) NOT NULL DEFAULT 0,
+            offer_price DECIMAL(10,2) NOT NULL DEFAULT 0,
+            discount_percent DECIMAL(5,2) DEFAULT 0,
+            status ENUM('active','inactive') DEFAULT 'active',
+            show_on_homepage TINYINT(1) DEFAULT 1,
+            display_order INT DEFAULT 0,
+            start_date DATE,
+            end_date DATE,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            INDEX idx_status (status),
+            INDEX idx_homepage (show_on_homepage),
+            INDEX idx_dates (start_date, end_date)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci",
+
+        // 17. Create payment_failures table
         "payment_failures" => "CREATE TABLE IF NOT EXISTS payment_failures (
             id INT NOT NULL AUTO_INCREMENT,
             order_id INT DEFAULT NULL,

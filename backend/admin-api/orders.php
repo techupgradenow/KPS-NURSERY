@@ -2,7 +2,7 @@
 /**
  * Admin Orders API
  * Order management and status updates
- * SK Bakers Admin Panel
+ * KPS Nursery Admin Panel
  */
 
 require_once 'middleware.php';
@@ -82,46 +82,53 @@ function handleGet() {
 
         // Single order with details
         if (isset($_GET['id'])) {
-            $stmt = $db->prepare("
-                SELECT o.*,
-                       u.name as customer_name, u.mobile as customer_mobile, u.email as customer_email,
-                       a.street as shipping_street, a.landmark as shipping_landmark,
-                       a.city as shipping_city, a.state as shipping_state, a.pincode as shipping_pincode,
-                       a.name as shipping_name, a.mobile as shipping_mobile, a.type as address_type
-                FROM orders o
-                LEFT JOIN users u ON o.user_id = u.id
-                LEFT JOIN addresses a ON o.address_id = a.id
-                WHERE o.id = :id
-            ");
-            $stmt->execute([':id' => $_GET['id']]);
-            $order = $stmt->fetch(PDO::FETCH_ASSOC);
+            try {
+                // Customer details are stored directly in orders table (no address_id)
+                $stmt = $db->prepare("
+                    SELECT o.*,
+                           u.name as user_name, u.mobile as user_mobile, u.email as user_email
+                    FROM orders o
+                    LEFT JOIN users u ON o.user_id = u.id
+                    WHERE o.id = :id
+                ");
+                $stmt->execute([':id' => $_GET['id']]);
+                $order = $stmt->fetch(PDO::FETCH_ASSOC);
 
-            if (!$order) {
-                Response::notFound('Order not found');
+                if (!$order) {
+                    Response::notFound('Order not found');
+                }
+
+                // Get order items
+                $stmt = $db->prepare("
+                    SELECT oi.*, p.image as product_image
+                    FROM order_items oi
+                    LEFT JOIN products p ON oi.product_id = p.id
+                    WHERE oi.order_id = :order_id
+                ");
+                $stmt->execute([':order_id' => $order['id']]);
+                $order['items'] = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                // Get order timeline (from activity logs) - wrap in try-catch as table may not exist
+                try {
+                    $stmt = $db->prepare("
+                        SELECT action, new_values, created_at, a.name as admin_name
+                        FROM admin_activity_logs l
+                        LEFT JOIN admins a ON l.admin_id = a.id
+                        WHERE entity_type = 'order' AND entity_id = :order_id
+                        ORDER BY created_at ASC
+                    ");
+                    $stmt->execute([':order_id' => $order['id']]);
+                    $order['timeline'] = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                } catch (Exception $e) {
+                    // Timeline table may not exist - skip
+                    $order['timeline'] = [];
+                }
+
+                Response::success($order);
+            } catch (PDOException $e) {
+                error_log("Order detail error: " . $e->getMessage());
+                Response::serverError('Failed to load order: ' . $e->getMessage());
             }
-
-            // Get order items
-            $stmt = $db->prepare("
-                SELECT oi.*, p.image as product_image
-                FROM order_items oi
-                LEFT JOIN products p ON oi.product_id = p.id
-                WHERE oi.order_id = :order_id
-            ");
-            $stmt->execute([':order_id' => $order['id']]);
-            $order['items'] = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-            // Get order timeline (from activity logs)
-            $stmt = $db->prepare("
-                SELECT action, new_values, created_at, a.name as admin_name
-                FROM admin_activity_logs l
-                LEFT JOIN admins a ON l.admin_id = a.id
-                WHERE entity_type = 'order' AND entity_id = :order_id
-                ORDER BY created_at ASC
-            ");
-            $stmt->execute([':order_id' => $order['id']]);
-            $order['timeline'] = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-            Response::success($order);
         }
 
         // List orders with pagination and filters

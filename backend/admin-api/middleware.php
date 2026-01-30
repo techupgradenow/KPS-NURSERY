@@ -2,9 +2,12 @@
 /**
  * Admin API Middleware
  * Authentication and authorization helpers
- * SK Bakers Admin Panel
+ * KPS Nursery Admin Panel
  * Supports both database and file-based storage
  */
+
+// Set timezone to match MySQL server
+date_default_timezone_set('Asia/Kolkata');
 
 require_once __DIR__ . '/../config/db.php';
 require_once __DIR__ . '/../utils/Response.php';
@@ -52,7 +55,7 @@ function initFileStorage() {
             [
                 'id' => 1,
                 'username' => 'admin',
-                'email' => 'admin@skbakers.com',
+                'email' => 'admin@kpsnursery.com',
                 'password' => password_hash('admin123', PASSWORD_DEFAULT),
                 'name' => 'Super Admin',
                 'role' => 'admin',
@@ -77,11 +80,29 @@ function loadAdmins() {
 
 function loadSessions() {
     if (!file_exists(SESSIONS_FILE)) return [];
-    return json_decode(file_get_contents(SESSIONS_FILE), true) ?: [];
+    $sessions = json_decode(file_get_contents(SESSIONS_FILE), true) ?: [];
+
+    // Auto-cleanup: Remove expired sessions
+    $now = time();
+    $validSessions = array_filter($sessions, function($s) use ($now) {
+        return isset($s['expires_at']) && strtotime($s['expires_at']) > $now;
+    });
+
+    // Save if cleanup happened
+    if (count($validSessions) < count($sessions)) {
+        file_put_contents(SESSIONS_FILE, json_encode(array_values($validSessions), JSON_PRETTY_PRINT));
+    }
+
+    return array_values($validSessions);
 }
 
 function saveSessions($sessions) {
-    file_put_contents(SESSIONS_FILE, json_encode($sessions, JSON_PRETTY_PRINT));
+    // Filter out expired sessions before saving
+    $now = time();
+    $validSessions = array_filter($sessions, function($s) use ($now) {
+        return isset($s['expires_at']) && strtotime($s['expires_at']) > $now;
+    });
+    file_put_contents(SESSIONS_FILE, json_encode(array_values($validSessions), JSON_PRETTY_PRINT));
 }
 
 function findAdminById($admins, $id) {
@@ -172,19 +193,52 @@ function requireAuth($db, $sessionToken, $requiredRole = null) {
  * Get session token from request headers or body
  */
 function getSessionToken() {
-    // Check Authorization header
+    // Check Authorization header (case-insensitive)
     $headers = getallheaders();
-    if (isset($headers['Authorization'])) {
-        $auth = $headers['Authorization'];
+
+    // Normalize header keys to lowercase for case-insensitive matching
+    $normalizedHeaders = [];
+    if ($headers) {
+        foreach ($headers as $key => $value) {
+            $normalizedHeaders[strtolower($key)] = $value;
+        }
+    }
+
+    if (isset($normalizedHeaders['authorization'])) {
+        $auth = $normalizedHeaders['authorization'];
         if (preg_match('/Bearer\s+(.+)$/i', $auth, $matches)) {
             return $matches[1];
         }
     }
 
-    // Check request body
-    $input = json_decode(file_get_contents('php://input'), true);
-    if (isset($input['session_token'])) {
-        return $input['session_token'];
+    // Also check Apache-specific header
+    if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
+        $auth = $_SERVER['HTTP_AUTHORIZATION'];
+        if (preg_match('/Bearer\s+(.+)$/i', $auth, $matches)) {
+            return $matches[1];
+        }
+    }
+
+    // Check for redirect auth (CGI/FastCGI)
+    if (isset($_SERVER['REDIRECT_HTTP_AUTHORIZATION'])) {
+        $auth = $_SERVER['REDIRECT_HTTP_AUTHORIZATION'];
+        if (preg_match('/Bearer\s+(.+)$/i', $auth, $matches)) {
+            return $matches[1];
+        }
+    }
+
+    // Check request body (for non-multipart requests)
+    $contentType = $_SERVER['CONTENT_TYPE'] ?? '';
+    if (strpos($contentType, 'multipart/form-data') === false) {
+        $input = json_decode(file_get_contents('php://input'), true);
+        if (isset($input['session_token'])) {
+            return $input['session_token'];
+        }
+    }
+
+    // Check POST/GET parameter
+    if (isset($_POST['session_token'])) {
+        return $_POST['session_token'];
     }
 
     // Check query parameter

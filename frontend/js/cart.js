@@ -87,7 +87,12 @@ function initializeCart() {
  * Enhance cart items with full product details
  */
 function enhanceCartItems() {
-    const productIds = CartState.items.map(item => item.id).join(',');
+    const productIds = CartState.items.filter(item => !item.isCombo).map(item => item.id).join(',');
+    if (!productIds) {
+        renderCart();
+        updateBillDetails();
+        return;
+    }
     
     // Fetch product details for all items in cart
     $.ajax({
@@ -167,16 +172,23 @@ function renderCart() {
  * Create Cart Item HTML
  */
 function createCartItemHTML(item) {
-    const subtotal = (item.price * item.quantity).toFixed(2);
+    const price = parseFloat(item.price) || 0;
+    const subtotal = (price * item.quantity).toFixed(2);
     const isOutOfStock = item.stock !== undefined && item.stock <= 0;
-    const unit = item.unit || 'kg';
+    const isCombo = item.isCombo === true;
+    const unit = isCombo ? 'combo' : (item.unit || 'kg');
+    const itemIdAttr = isCombo ? item.id : item.id;
+    const itemIdJs = isCombo ? "'" + item.id + "'" : item.id;
+    const imgSrc = item.image || 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%22100%22%3E%3Crect fill=%22%23f3f4f6%22 width=%22100%22 height=%22100%22/%3E%3Ctext x=%2250%22 y=%2255%22 text-anchor=%22middle%22 fill=%22%239ca3af%22 font-size=%2212%22%3ENo Image%3C/text%3E%3C/svg%3E';
+    const unitDisplay = isCombo ? '' : '<span class="unit-text">/' + unit + '</span>';
+    const comboBadge = isCombo ? '<span style="background:#2E7D32;color:#fff;font-size:10px;padding:2px 6px;border-radius:10px;margin-left:6px;">COMBO</span>' : '';
 
     return `
-        <div class="cart-item-card ${isOutOfStock ? 'out-of-stock' : ''}" data-id="${item.id}">
+        <div class="cart-item-card ${isOutOfStock ? 'out-of-stock' : ''}" data-id="${itemIdAttr}">
             <div class="cart-item-content">
                 <div class="cart-item-image-wrapper">
-                    <img src="${item.image}"
-                         alt="${item.name}"
+                    <img src="${imgSrc}"
+                         alt="${item.name || 'Product'}"
                          class="cart-item-image"
                          onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%22100%22%3E%3Crect fill=%22%23f3f4f6%22 width=%22100%22 height=%22100%22/%3E%3Ctext x=%2250%22 y=%2255%22 text-anchor=%22middle%22 fill=%22%239ca3af%22 font-size=%2212%22%3ENo Image%3C/text%3E%3C/svg%3E'">
                     ${isOutOfStock ? '<div class="stock-badge">Out of Stock</div>' : ''}
@@ -184,21 +196,21 @@ function createCartItemHTML(item) {
 
                 <div class="cart-item-details">
                     <div class="cart-item-header">
-                        <h3 class="cart-item-name">${item.name}</h3>
-                        <button class="cart-item-delete" onclick="confirmRemoveItem(${item.id})" title="Remove item">
+                        <h3 class="cart-item-name">${item.name || 'Unnamed'}${comboBadge}</h3>
+                        <button class="cart-item-delete" onclick="confirmRemoveItem(${itemIdJs})" title="Remove item">
                             <i class="fas fa-trash-alt"></i>
                         </button>
                     </div>
 
-                    <div class="cart-item-unit-price">₹${parseFloat(item.price).toFixed(2)}<span class="unit-text">/${unit}</span></div>
+                    <div class="cart-item-unit-price">₹${price.toFixed(2)}${unitDisplay}</div>
 
                     <div class="cart-item-price-row">
                         <div class="quantity-selector">
-                            <button class="qty-btn" onclick="updateQuantity(${item.id}, ${item.quantity - 1})" ${item.quantity <= 1 ? 'disabled' : ''}>
+                            <button class="qty-btn" onclick="updateQuantity(${itemIdJs}, ${item.quantity - 1})" ${item.quantity <= 1 ? 'disabled' : ''}>
                                 <i class="fas fa-minus"></i>
                             </button>
                             <span class="qty-value">${item.quantity}</span>
-                            <button class="qty-btn" onclick="updateQuantity(${item.id}, ${item.quantity + 1})">
+                            <button class="qty-btn" onclick="updateQuantity(${itemIdJs}, ${item.quantity + 1})">
                                 <i class="fas fa-plus"></i>
                             </button>
                         </div>

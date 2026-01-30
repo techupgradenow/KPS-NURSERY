@@ -2,7 +2,7 @@
 /**
  * Admin Offer Popups API
  * Popup CRUD operations
- * SK Bakers Admin Panel
+ * KPS Nursery Admin Panel
  */
 
 require_once 'middleware.php';
@@ -74,7 +74,7 @@ function handleGet() {
 
         // Single popup
         if (isset($_GET['id'])) {
-            $stmt = $db->prepare("SELECT * FROM offer_popups WHERE id = :id");
+            $stmt = $db->prepare("SELECT * FROM popups WHERE id = :id");
             $stmt->execute([':id' => $_GET['id']]);
             $popup = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -98,11 +98,9 @@ function handleGet() {
         $whereClause = count($where) > 0 ? 'WHERE ' . implode(' AND ', $where) : '';
 
         $stmt = $db->prepare("
-            SELECT p.*, a.name as created_by_name
-            FROM offer_popups p
-            LEFT JOIN admins a ON p.created_by = a.id
+            SELECT * FROM popups
             $whereClause
-            ORDER BY p.created_at DESC
+            ORDER BY created_at DESC
         ");
         $stmt->execute($params);
         $popups = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -169,13 +167,12 @@ function handlePost($admin) {
             'display_rule' => $displayRule,
             'is_active' => isset($input['is_active']) ? ($input['is_active'] ? 1 : 0) : 1,
             'start_date' => isset($input['start_date']) && $input['start_date'] !== '' ? $input['start_date'] : null,
-            'end_date' => isset($input['end_date']) && $input['end_date'] !== '' ? $input['end_date'] : null,
-            'created_by' => $admin['id']
+            'end_date' => isset($input['end_date']) && $input['end_date'] !== '' ? $input['end_date'] : null
         ];
 
         $stmt = $db->prepare("
-            INSERT INTO offer_popups (title, description, image, coupon_code, cta_text, cta_link, display_rule, is_active, start_date, end_date, created_by)
-            VALUES (:title, :description, :image, :coupon_code, :cta_text, :cta_link, :display_rule, :is_active, :start_date, :end_date, :created_by)
+            INSERT INTO popups (title, description, image, coupon_code, cta_text, cta_link, display_rule, is_active, start_date, end_date)
+            VALUES (:title, :description, :image, :coupon_code, :cta_text, :cta_link, :display_rule, :is_active, :start_date, :end_date)
         ");
 
         $stmt->execute([
@@ -188,15 +185,14 @@ function handlePost($admin) {
             ':display_rule' => $data['display_rule'],
             ':is_active' => $data['is_active'],
             ':start_date' => $data['start_date'],
-            ':end_date' => $data['end_date'],
-            ':created_by' => $data['created_by']
+            ':end_date' => $data['end_date']
         ]);
 
         $popupId = $db->lastInsertId();
         logAdminActivity($db, $admin['id'], 'create', 'popup', $popupId, null, $data);
 
         // Fetch created popup
-        $stmt = $db->prepare("SELECT * FROM offer_popups WHERE id = :id");
+        $stmt = $db->prepare("SELECT * FROM popups WHERE id = :id");
         $stmt->execute([':id' => $popupId]);
         $popup = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -217,7 +213,6 @@ function handlePost($admin) {
             'is_active' => isset($input['is_active']) ? ($input['is_active'] ? 1 : 0) : 1,
             'start_date' => isset($input['start_date']) && $input['start_date'] !== '' ? $input['start_date'] : null,
             'end_date' => isset($input['end_date']) && $input['end_date'] !== '' ? $input['end_date'] : null,
-            'created_by' => $admin['id'],
             'created_at' => date('Y-m-d H:i:s')
         ];
 
@@ -250,7 +245,7 @@ function handlePut($admin) {
         $db = $GLOBALS['db'];
 
         // Get existing popup
-        $stmt = $db->prepare("SELECT * FROM offer_popups WHERE id = :id");
+        $stmt = $db->prepare("SELECT * FROM popups WHERE id = :id");
         $stmt->execute([':id' => $input['id']]);
         $existing = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -283,14 +278,14 @@ function handlePut($admin) {
             Response::error('No fields to update');
         }
 
-        $sql = "UPDATE offer_popups SET " . implode(', ', $updates) . " WHERE id = :id";
+        $sql = "UPDATE popups SET " . implode(', ', $updates) . " WHERE id = :id";
         $stmt = $db->prepare($sql);
         $stmt->execute($params);
 
         logAdminActivity($db, $admin['id'], 'update', 'popup', $input['id'], $existing, $newValues);
 
         // Fetch updated popup
-        $stmt = $db->prepare("SELECT * FROM offer_popups WHERE id = :id");
+        $stmt = $db->prepare("SELECT * FROM popups WHERE id = :id");
         $stmt->execute([':id' => $input['id']]);
         $popup = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -347,7 +342,7 @@ function handleDelete($admin) {
         $db = $GLOBALS['db'];
 
         // Get existing popup
-        $stmt = $db->prepare("SELECT * FROM offer_popups WHERE id = :id");
+        $stmt = $db->prepare("SELECT * FROM popups WHERE id = :id");
         $stmt->execute([':id' => $id]);
         $existing = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -355,7 +350,7 @@ function handleDelete($admin) {
             Response::notFound('Popup not found');
         }
 
-        $stmt = $db->prepare("DELETE FROM offer_popups WHERE id = :id");
+        $stmt = $db->prepare("DELETE FROM popups WHERE id = :id");
         $stmt->execute([':id' => $id]);
 
         logAdminActivity($db, $admin['id'], 'delete', 'popup', $id, $existing, null);

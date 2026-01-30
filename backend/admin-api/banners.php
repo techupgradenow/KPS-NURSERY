@@ -98,11 +98,10 @@ function handleGet() {
         $whereClause = count($where) > 0 ? 'WHERE ' . implode(' AND ', $where) : '';
 
         $stmt = $db->prepare("
-            SELECT b.*, a.name as created_by_name
-            FROM banners b
-            LEFT JOIN admins a ON b.created_by = a.id
+            SELECT *
+            FROM banners
             $whereClause
-            ORDER BY b.display_order ASC, b.created_at DESC
+            ORDER BY display_order ASC, created_at DESC
         ");
         $stmt->execute($params);
         $banners = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -154,8 +153,9 @@ function handlePost($admin) {
         return;
     }
 
-    // Create new banner
-    if (!isset($input['image']) || empty($input['image'])) {
+    // Create new banner - accept desktop_image or image
+    $image = isset($input['desktop_image']) ? $input['desktop_image'] : (isset($input['image']) ? $input['image'] : '');
+    if (empty($image)) {
         Response::error('Banner image is required');
     }
 
@@ -168,22 +168,19 @@ function handlePost($admin) {
 
         $data = [
             'title' => isset($input['title']) ? trim($input['title']) : null,
-            'caption' => isset($input['caption']) ? trim($input['caption']) : null,
-            'image' => trim($input['image']),
+            'caption' => isset($input['caption']) ? trim($input['caption']) : (isset($input['description']) ? trim($input['description']) : null),
+            'image' => trim($image),
             'redirect_type' => isset($input['redirect_type']) ? $input['redirect_type'] : 'none',
             'redirect_url' => isset($input['redirect_url']) ? trim($input['redirect_url']) : null,
-            'redirect_product_id' => isset($input['redirect_product_id']) && $input['redirect_product_id'] !== '' ? intval($input['redirect_product_id']) : null,
-            'redirect_category_id' => isset($input['redirect_category_id']) && $input['redirect_category_id'] !== '' ? intval($input['redirect_category_id']) : null,
             'display_order' => $maxOrder + 1,
             'is_active' => isset($input['is_active']) ? ($input['is_active'] ? 1 : 0) : 1,
             'start_date' => isset($input['start_date']) && $input['start_date'] !== '' ? $input['start_date'] : null,
-            'end_date' => isset($input['end_date']) && $input['end_date'] !== '' ? $input['end_date'] : null,
-            'created_by' => $admin['id']
+            'end_date' => isset($input['end_date']) && $input['end_date'] !== '' ? $input['end_date'] : null
         ];
 
         $stmt = $db->prepare("
-            INSERT INTO banners (title, caption, image, redirect_type, redirect_url, redirect_product_id, redirect_category_id, display_order, is_active, start_date, end_date, created_by)
-            VALUES (:title, :caption, :image, :redirect_type, :redirect_url, :redirect_product_id, :redirect_category_id, :display_order, :is_active, :start_date, :end_date, :created_by)
+            INSERT INTO banners (title, caption, image, redirect_type, redirect_url, display_order, is_active, start_date, end_date)
+            VALUES (:title, :caption, :image, :redirect_type, :redirect_url, :display_order, :is_active, :start_date, :end_date)
         ");
 
         $stmt->execute([
@@ -192,13 +189,10 @@ function handlePost($admin) {
             ':image' => $data['image'],
             ':redirect_type' => $data['redirect_type'],
             ':redirect_url' => $data['redirect_url'],
-            ':redirect_product_id' => $data['redirect_product_id'],
-            ':redirect_category_id' => $data['redirect_category_id'],
             ':display_order' => $data['display_order'],
             ':is_active' => $data['is_active'],
             ':start_date' => $data['start_date'],
-            ':end_date' => $data['end_date'],
-            ':created_by' => $data['created_by']
+            ':end_date' => $data['end_date']
         ]);
 
         $bannerId = $db->lastInsertId();
@@ -225,17 +219,14 @@ function handlePost($admin) {
         $newBanner = [
             'id' => getNextBannerId($banners),
             'title' => isset($input['title']) ? trim($input['title']) : null,
-            'caption' => isset($input['caption']) ? trim($input['caption']) : null,
-            'image' => trim($input['image']),
+            'caption' => isset($input['caption']) ? trim($input['caption']) : (isset($input['description']) ? trim($input['description']) : null),
+            'image' => trim($image),
             'redirect_type' => isset($input['redirect_type']) ? $input['redirect_type'] : 'none',
             'redirect_url' => isset($input['redirect_url']) ? trim($input['redirect_url']) : null,
-            'redirect_product_id' => isset($input['redirect_product_id']) && $input['redirect_product_id'] !== '' ? intval($input['redirect_product_id']) : null,
-            'redirect_category_id' => isset($input['redirect_category_id']) && $input['redirect_category_id'] !== '' ? intval($input['redirect_category_id']) : null,
             'display_order' => $maxOrder + 1,
             'is_active' => isset($input['is_active']) ? ($input['is_active'] ? 1 : 0) : 1,
             'start_date' => isset($input['start_date']) && $input['start_date'] !== '' ? $input['start_date'] : null,
             'end_date' => isset($input['end_date']) && $input['end_date'] !== '' ? $input['end_date'] : null,
-            'created_by' => $admin['id'],
             'created_at' => date('Y-m-d H:i:s')
         ];
 
@@ -311,8 +302,13 @@ function handlePut($admin) {
             Response::notFound('Banner not found');
         }
 
+        // Map desktop_image to image
+        if (array_key_exists('desktop_image', $input) && !array_key_exists('image', $input)) {
+            $input['image'] = $input['desktop_image'];
+        }
+
         // Build update query
-        $allowedFields = ['title', 'caption', 'image', 'redirect_type', 'redirect_url', 'redirect_product_id', 'redirect_category_id', 'display_order', 'is_active', 'start_date', 'end_date'];
+        $allowedFields = ['title', 'caption', 'image', 'redirect_type', 'redirect_url', 'display_order', 'is_active', 'start_date', 'end_date'];
         $updates = [];
         $params = [':id' => $input['id']];
         $newValues = [];
@@ -322,9 +318,6 @@ function handlePut($admin) {
                 $value = $input[$field];
                 if ($field === 'is_active') {
                     $value = $value ? 1 : 0;
-                }
-                if (in_array($field, ['redirect_product_id', 'redirect_category_id']) && $value === '') {
-                    $value = null;
                 }
                 if (in_array($field, ['start_date', 'end_date']) && $value === '') {
                     $value = null;

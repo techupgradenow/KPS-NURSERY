@@ -2,7 +2,7 @@
 /**
  * Admin Products API
  * Product CRUD operations
- * SK Bakers Admin Panel
+ * KPS Nursery Admin Panel
  */
 
 require_once 'middleware.php';
@@ -257,6 +257,7 @@ function handleGet() {
 
 /**
  * POST - Create new product
+ * Handles both JSON and FormData input
  */
 function handlePost($admin) {
     // Only admin can create products
@@ -264,15 +265,53 @@ function handlePost($admin) {
         Response::error('Permission denied', 403);
     }
 
-    $input = json_decode(file_get_contents('php://input'), true);
+    try {
+        // Handle both JSON and FormData input
+        $contentType = $_SERVER['CONTENT_TYPE'] ?? '';
 
-    // Validate required fields
-    $required = ['name', 'category_id', 'price'];
-    foreach ($required as $field) {
-        if (!isset($input[$field]) || empty($input[$field])) {
-            Response::error("$field is required");
+        if (strpos($contentType, 'application/json') !== false) {
+            // JSON input
+            $input = json_decode(file_get_contents('php://input'), true);
+        } else {
+            // FormData input (from form with file upload)
+            $input = $_POST;
+
+            // Parse nested JSON if present (some frontends send JSON strings in FormData)
+            foreach ($input as $key => $value) {
+                if (is_string($value) && (strpos($value, '[') === 0 || strpos($value, '{') === 0)) {
+                    $decoded = json_decode($value, true);
+                    if ($decoded !== null) {
+                        $input[$key] = $decoded;
+                    }
+                }
+            }
         }
-    }
+
+        // Handle boolean/numeric conversions from form data
+        if (isset($input['is_active'])) {
+            $input['is_active'] = filter_var($input['is_active'], FILTER_VALIDATE_BOOLEAN) ? 1 : 0;
+        }
+        if (isset($input['price'])) {
+            $input['price'] = floatval($input['price']);
+        }
+        if (isset($input['stock'])) {
+            $input['stock'] = intval($input['stock']);
+        }
+        if (isset($input['stock_quantity'])) {
+            // Map stock_quantity to stock for compatibility
+            $input['stock'] = intval($input['stock_quantity']);
+        }
+        if (isset($input['display_order'])) {
+            $input['display_order'] = intval($input['display_order']);
+        }
+
+        // Validate required fields
+        $required = ['name', 'category_id', 'price'];
+        foreach ($required as $field) {
+            if (!isset($input[$field]) || $input[$field] === '') {
+                Response::error("$field is required");
+            }
+        }
 
     if ($GLOBALS['useDatabase']) {
         $db = $GLOBALS['db'];
@@ -284,7 +323,7 @@ function handlePost($admin) {
             Response::error('Invalid category');
         }
 
-        // Prepare data
+        // Prepare data (removed 'images' - column doesn't exist in table)
         $data = [
             'category_id' => $input['category_id'],
             'name' => trim($input['name']),
@@ -293,17 +332,14 @@ function handlePost($admin) {
             'discount_price' => isset($input['discount_price']) && $input['discount_price'] !== '' ? floatval($input['discount_price']) : null,
             'unit' => isset($input['unit']) ? trim($input['unit']) : 'kg',
             'image' => isset($input['image']) ? trim($input['image']) : null,
-            'images' => isset($input['images']) ? json_encode($input['images']) : null,
             'stock' => isset($input['stock']) ? intval($input['stock']) : 0,
-            'rating' => isset($input['rating']) ? floatval($input['rating']) : 0,
-            'reviews' => isset($input['reviews']) ? intval($input['reviews']) : 0,
             'display_order' => isset($input['display_order']) ? intval($input['display_order']) : 0,
             'is_active' => isset($input['is_active']) ? ($input['is_active'] ? 1 : 0) : 1
         ];
 
         $stmt = $db->prepare("
-            INSERT INTO products (category_id, name, description, price, discount_price, unit, image, images, stock, rating, reviews, display_order, is_active)
-            VALUES (:category_id, :name, :description, :price, :discount_price, :unit, :image, :images, :stock, :rating, :reviews, :display_order, :is_active)
+            INSERT INTO products (category_id, name, description, price, discount_price, unit, image, stock, display_order, is_active)
+            VALUES (:category_id, :name, :description, :price, :discount_price, :unit, :image, :stock, :display_order, :is_active)
         ");
 
         $stmt->execute([
@@ -314,10 +350,7 @@ function handlePost($admin) {
             ':discount_price' => $data['discount_price'],
             ':unit' => $data['unit'],
             ':image' => $data['image'],
-            ':images' => $data['images'],
             ':stock' => $data['stock'],
-            ':rating' => $data['rating'],
-            ':reviews' => $data['reviews'],
             ':display_order' => $data['display_order'],
             ':is_active' => $data['is_active']
         ]);
@@ -380,10 +413,18 @@ function handlePost($admin) {
 
         Response::success($newProduct, 'Product created successfully');
     }
+    } catch (PDOException $e) {
+        error_log("Product create DB error: " . $e->getMessage());
+        Response::serverError('Database error: ' . $e->getMessage());
+    } catch (Exception $e) {
+        error_log("Product create error: " . $e->getMessage());
+        Response::serverError('Failed to create product: ' . $e->getMessage());
+    }
 }
 
 /**
  * PUT - Update product
+ * Handles both JSON and FormData input
  */
 function handlePut($admin) {
     // Only admin can update products
@@ -391,11 +432,44 @@ function handlePut($admin) {
         Response::error('Permission denied', 403);
     }
 
-    $input = json_decode(file_get_contents('php://input'), true);
+    try {
+        // Handle both JSON and FormData input
+        $contentType = $_SERVER['CONTENT_TYPE'] ?? '';
 
-    if (!isset($input['id'])) {
-        Response::error('Product ID is required');
-    }
+        if (strpos($contentType, 'application/json') !== false) {
+            $input = json_decode(file_get_contents('php://input'), true);
+        } else {
+            // FormData input
+            $input = $_POST;
+
+            // Parse nested JSON if present
+            foreach ($input as $key => $value) {
+                if (is_string($value) && (strpos($value, '[') === 0 || strpos($value, '{') === 0)) {
+                    $decoded = json_decode($value, true);
+                    if ($decoded !== null) {
+                        $input[$key] = $decoded;
+                    }
+                }
+            }
+        }
+
+        // Handle boolean/numeric conversions
+        if (isset($input['is_active'])) {
+            $input['is_active'] = filter_var($input['is_active'], FILTER_VALIDATE_BOOLEAN) ? 1 : 0;
+        }
+        if (isset($input['stock_quantity'])) {
+            $input['stock'] = intval($input['stock_quantity']);
+        }
+
+        // Get ID from URL (via .htaccess rewrite) or request body
+        $productId = isset($_GET['id']) ? $_GET['id'] : (isset($input['id']) ? $input['id'] : null);
+
+        if (!$productId) {
+            Response::error('Product ID is required');
+        }
+
+        // Set ID in input for consistency
+        $input['id'] = $productId;
 
     if ($GLOBALS['useDatabase']) {
         $db = $GLOBALS['db'];
@@ -410,7 +484,7 @@ function handlePut($admin) {
         }
 
         // Build update query dynamically
-        $allowedFields = ['category_id', 'name', 'description', 'price', 'discount_price', 'unit', 'image', 'images', 'stock', 'rating', 'reviews', 'display_order', 'is_active'];
+        $allowedFields = ['category_id', 'name', 'description', 'price', 'discount_price', 'unit', 'image', 'stock', 'rating', 'reviews', 'display_order', 'is_active'];
         $updates = [];
         $params = [':id' => $input['id']];
         $newValues = [];
@@ -418,9 +492,6 @@ function handlePut($admin) {
         foreach ($allowedFields as $field) {
             if (isset($input[$field])) {
                 $value = $input[$field];
-                if ($field === 'images' && is_array($value)) {
-                    $value = json_encode($value);
-                }
                 if ($field === 'is_active') {
                     $value = $value ? 1 : 0;
                 }
@@ -488,6 +559,13 @@ function handlePut($admin) {
         if (!$found) {
             Response::notFound('Product not found');
         }
+    }
+    } catch (PDOException $e) {
+        error_log("Product update DB error: " . $e->getMessage());
+        Response::serverError('Database error: ' . $e->getMessage());
+    } catch (Exception $e) {
+        error_log("Product update error: " . $e->getMessage());
+        Response::serverError('Failed to update product: ' . $e->getMessage());
     }
 }
 

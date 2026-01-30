@@ -20,6 +20,7 @@ $(document).ready(function() {
 
     // Load initial data
     loadCategories();
+    loadComboOffers();
     loadAllProducts(); // Load all products initially
 
     // Setup event listeners
@@ -80,8 +81,11 @@ function renderBanners(banners) {
 
     banners.forEach((banner, index) => {
         // Get image URLs - use desktop_image and mobile_image, fallback to image
-        const desktopImg = banner.desktop_image || banner.image || '';
-        const mobileImg = banner.mobile_image || banner.image || desktopImg;
+        // Use getImagePath() to normalize paths for both local and production environments
+        const rawDesktopImg = banner.desktop_image || banner.image || '';
+        const rawMobileImg = banner.mobile_image || banner.image || rawDesktopImg;
+        const desktopImg = rawDesktopImg ? getImagePath(rawDesktopImg) : '';
+        const mobileImg = rawMobileImg ? getImagePath(rawMobileImg) : '';
 
         // Generate placeholder if no images
         const placeholderColor = getPlaceholderColor(index);
@@ -394,6 +398,130 @@ function renderCategories(categories) {
             </div>
         `;
         container.append(categoryHTML);
+    });
+}
+
+// ============================================
+// COMBO OFFERS FUNCTIONALITY
+// ============================================
+
+/**
+ * Load Combo Offers from API
+ */
+function loadComboOffers() {
+    $.ajax({
+        url: API_ENDPOINTS.comboOffers,
+        type: 'GET',
+        dataType: 'json',
+        success: function(response) {
+            if (response.success && response.data && response.data.length > 0) {
+                renderComboOffers(response.data);
+                $('#combo-offers-section').show();
+            } else {
+                $('#combo-offers-section').hide();
+            }
+        },
+        error: function() {
+            $('#combo-offers-section').hide();
+        }
+    });
+}
+
+/**
+ * Render Combo Offer Cards
+ */
+function renderComboOffers(combos) {
+    const container = $('#combo-offers-container');
+    container.empty();
+
+    combos.forEach(function(combo) {
+        const imgSrc = combo.image ? getImagePath(combo.image) : '../assets/placeholder.png';
+        const savings = (parseFloat(combo.original_price) - parseFloat(combo.offer_price)).toFixed(0);
+        const discountPct = Math.round(combo.discount_percent);
+
+        // Product tags
+        let productTags = '';
+        if (combo.products && combo.products.length > 0) {
+            productTags = combo.products.map(function(p) {
+                return '<span class="combo-product-tag">' + p.name + '</span>';
+            }).join('');
+        }
+
+        const card = `
+            <div class="combo-offer-card" data-combo-id="${combo.id}">
+                ${discountPct > 0 ? '<div class="combo-discount-badge">' + discountPct + '% OFF</div>' : ''}
+                <div class="combo-card-image">
+                    <img src="${imgSrc}" alt="${combo.title}" onerror="this.src='../assets/placeholder.png'">
+                </div>
+                <div class="combo-card-body">
+                    <h3 class="combo-card-title">${combo.title}</h3>
+                    ${combo.description ? '<p class="combo-card-desc">' + combo.description + '</p>' : ''}
+                    ${productTags ? '<div class="combo-product-tags">' + productTags + '</div>' : ''}
+                    <div class="combo-card-pricing">
+                        <span class="combo-offer-price">&#8377;${parseFloat(combo.offer_price).toFixed(0)}</span>
+                        <span class="combo-original-price">&#8377;${parseFloat(combo.original_price).toFixed(0)}</span>
+                        ${savings > 0 ? '<span class="combo-savings">Save &#8377;' + savings + '</span>' : ''}
+                    </div>
+                    <button class="combo-add-btn" onclick="addComboToCart(${combo.id})">
+                        <i class="fas fa-shopping-cart"></i> Add Combo
+                    </button>
+                </div>
+            </div>
+        `;
+        container.append(card);
+    });
+}
+
+/**
+ * Add combo to cart (adds all products in the combo)
+ */
+function addComboToCart(comboId) {
+    // Fetch combo details and add products to cart
+    $.ajax({
+        url: API_ENDPOINTS.comboOffers + '?id=' + comboId,
+        type: 'GET',
+        dataType: 'json',
+        success: function(response) {
+            if (response.success && response.data) {
+                const combo = response.data;
+                // Add as a single combo item to cart
+                let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+                const comboCartId = 'combo_' + comboId;
+                const existingIdx = cart.findIndex(function(item) { return item.id === comboCartId; });
+
+                if (existingIdx >= 0) {
+                    cart[existingIdx].quantity += 1;
+                } else {
+                    cart.push({
+                        id: comboCartId,
+                        name: combo.title || 'Combo Offer',
+                        price: parseFloat(combo.offer_price) || 0,
+                        originalPrice: parseFloat(combo.original_price) || 0,
+                        image: combo.image ? getImagePath(combo.image) : 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22200%22%3E%3Crect fill=%22%23e8f5e9%22 width=%22200%22 height=%22200%22/%3E%3Ctext x=%22100%22 y=%22105%22 text-anchor=%22middle%22 fill=%22%232E7D32%22 font-size=%2214%22%3ECombo Offer%3C/text%3E%3C/svg%3E',
+                        quantity: 1,
+                        unit: 'combo',
+                        isCombo: true,
+                        comboId: comboId,
+                        productIds: combo.product_ids || []
+                    });
+                }
+
+                localStorage.setItem('cart', JSON.stringify(cart));
+                // Sync AppState with updated localStorage and refresh badge
+                AppState.cart = cart;
+                AppState.updateCartBadge();
+
+                // Show feedback
+                if (typeof showToast === 'function') {
+                    showToast('Combo added to cart!', 'success');
+                } else if (typeof Toast !== 'undefined' && Toast.show) {
+                    Toast.show('Combo added to cart!', 'success');
+                }
+            }
+        },
+        error: function() {
+            alert('Failed to add combo to cart');
+        }
     });
 }
 
@@ -1580,7 +1708,7 @@ function showOfferPopup(popup) {
                 </button>
 
                 <!-- Image Only -->
-                <img src="${popup.image}" alt="Offer" class="offer-popup-image" onerror="closeOfferPopup()">
+                <img src="${getImagePath(popup.image)}" alt="Offer" class="offer-popup-image" onerror="closeOfferPopup()">
             </div>
         </div>
     `;

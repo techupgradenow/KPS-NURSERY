@@ -105,10 +105,10 @@ function getOrders($db) {
         Response::error('User ID is required');
     }
 
+    // Customer details are stored directly in orders table (no address_id join needed)
     $stmt = $db->prepare("
-        SELECT o.*, a.address as delivery_address, a.city, a.pincode
+        SELECT o.*
         FROM orders o
-        LEFT JOIN addresses a ON o.address_id = a.id
         WHERE o.user_id = :user_id
         ORDER BY o.created_at DESC
     ");
@@ -139,10 +139,11 @@ function getOrderDetail($db) {
 
     $orderId = $_GET['order_id'];
 
+    // Customer details are stored directly in orders table
+    // Only join users table for additional user info if needed
     $stmt = $db->prepare("
-        SELECT o.*, a.*, u.name as customer_name, u.mobile as customer_mobile
+        SELECT o.*, u.name as user_name, u.mobile as user_mobile, u.email as user_email
         FROM orders o
-        LEFT JOIN addresses a ON o.address_id = a.id
         LEFT JOIN users u ON o.user_id = u.id
         WHERE o.order_id = :order_id
     ");
@@ -172,12 +173,11 @@ function createOrder($db, $data) {
     // Support both 'cart' and 'items' keys for backwards compatibility
     $cartItems = isset($data['items']) ? $data['items'] : (isset($data['cart']) ? $data['cart'] : null);
 
-    // Validate required fields - customer details or address_id
+    // Validate required fields - customer details
     $hasCustomerDetails = !empty($data['customer_name']) && !empty($data['customer_mobile']) && !empty($data['customer_address']);
-    $hasAddressId = !empty($data['address_id']);
 
-    if (!$hasCustomerDetails && !$hasAddressId) {
-        Response::error('Customer details (name, mobile, address) or address_id is required');
+    if (!$hasCustomerDetails) {
+        Response::error('Customer details (name, mobile, address) are required');
     }
 
     // Validate payment method and totals
@@ -247,18 +247,17 @@ function createOrder($db, $data) {
                 $userId = $db->lastInsertId();
             }
         }
-        $addressId = isset($data['address_id']) ? $data['address_id'] : null;
         $deliveryDate = isset($data['delivery_date']) ? $data['delivery_date'] : null;
         $deliveryTime = isset($data['delivery_time']) ? $data['delivery_time'] : null;
 
-        // Insert order with customer details
+        // Insert order with customer details (address_id removed - not in table schema)
         $stmt = $db->prepare("
             INSERT INTO orders (
-                order_id, user_id, address_id, customer_name, customer_mobile, customer_address,
+                order_id, user_id, customer_name, customer_mobile, customer_address,
                 subtotal, delivery_charge, tax, discount, coupon_code,
                 total, payment_method, delivery_type, delivery_date, delivery_time, status, created_at
             ) VALUES (
-                :order_id, :user_id, :address_id, :customer_name, :customer_mobile, :customer_address,
+                :order_id, :user_id, :customer_name, :customer_mobile, :customer_address,
                 :subtotal, :delivery_charge, :tax, :discount, :coupon_code,
                 :total, :payment_method, :delivery_type, :delivery_date, :delivery_time, 'pending', NOW()
             )
@@ -267,7 +266,6 @@ function createOrder($db, $data) {
         $stmt->execute([
             ':order_id' => $orderId,
             ':user_id' => $userId,
-            ':address_id' => $addressId,
             ':customer_name' => $customerName,
             ':customer_mobile' => $customerMobile,
             ':customer_address' => $customerAddress,
